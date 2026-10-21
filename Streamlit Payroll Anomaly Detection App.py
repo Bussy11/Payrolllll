@@ -22,16 +22,33 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Inline Base64 & SVG Graphic Fallbacks for Guaranteed Mobile Rendering
+SVG_COAT_OF_ARMS = """
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="75" height="75">
+  <rect width="100" height="100" rx="15" fill="#008751"/>
+  <text x="50" y="38" font-size="28" text-anchor="middle" fill="#ffffff">🇳🇬</text>
+  <path d="M 30 50 Q 50 40 70 50 Q 50 75 30 50" fill="#ffffff"/>
+  <circle cx="50" cy="55" r="6" fill="#008751"/>
+  <text x="50" y="85" font-size="10" font-weight="bold" text-anchor="middle" fill="#ffffff">COAT OF ARMS</text>
+</svg>
+"""
+
+SVG_EFCC_LOGO = """
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="35" height="35">
+  <circle cx="50" cy="50" r="45" fill="#d32f2f" stroke="#ffffff" stroke-width="4"/>
+  <text x="50" y="58" font-size="18" font-weight="900" text-anchor="middle" fill="#ffffff">EFCC</text>
+</svg>
+"""
+
 st.markdown("""
     <style>
+    /* Main Background with Subtle Watermark Pattern */
     .stApp {
         background-color: #f7f9f8;
-        background-image: linear-gradient(rgba(247, 249, 248, 0.95), rgba(247, 249, 248, 0.95)), 
-                          url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Coat_of_arms_of_Nigeria.svg/500px-Coat_of_arms_of_Nigeria.svg.png');
-        background-repeat: no-repeat;
-        background-position: center;
-        background-attachment: fixed;
-        background-size: 35% auto;
+        background-image: radial-gradient(#008751 0.75px, transparent 0.75px), radial-gradient(#008751 0.75px, #f7f9f8 0.75px);
+        background-size: 30px 30px;
+        background-position: 0 0, 15px 15px;
+        background-opacity: 0.05;
     }
     .nigeria-banner {
         background: linear-gradient(90deg, #008751 0%, #008751 33%, #ffffff 33%, #ffffff 66%, #008751 66%, #008751 100%);
@@ -53,13 +70,17 @@ st.markdown("""
         font-weight: 900;
         font-size: 22px;
         text-transform: uppercase;
-        margin: 0;
+        margin: 8px 0 2px 0;
     }
     .top-header-sub {
         color: #1b5e20;
         font-size: 14px;
         font-weight: 700;
         margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
     .content-card {
         background-color: #ffffff;
@@ -80,19 +101,31 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
-# TOP HEADER
+# TOP HEADER WITH GUARANTEED DISPLAY LOGOS
 # ============================================================
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
-coat_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Coat_of_arms_of_Nigeria.svg/300px-Coat_of_arms_of_Nigeria.svg.png"
 
-st.markdown(
-    f'<div class="top-header">'
-    f'<img src="{coat_url}" width="70" style="margin-bottom:8px;" alt="Coat of Arms">'
-    f'<p class="top-header-title">Federal Republic of Nigeria</p>'
-    f'<p class="top-header-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>'
-    f'</div>',
-    unsafe_allow_html=True
-)
+# Main coat of arms emblem with fallback image sources
+coat_img_html = f"""
+<div class="top-header">
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 5px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Coat_of_arms_of_Nigeria.svg/250px-Coat_of_arms_of_Nigeria.svg.png" 
+             width="75" alt="Coat of Arms" 
+             onerror="this.style.display='none'; document.getElementById('coat-svg-fallback').style.display='block';">
+        <div id="coat-svg-fallback" style="display:none;">{SVG_COAT_OF_ARMS}</div>
+    </div>
+    <p class="top-header-title">Federal Republic of Nigeria</p>
+    <div class="top-header-sub">
+        <span>AI Payroll Anomaly Detection</span>
+        <span>•</span>
+        <span style="display:inline-flex; align-items:center; gap:4px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/2910/2910775.png" width="22" height="22" alt="EFCC" onerror="this.style.display='none';">
+            EFCC Forensic Audit Portal
+        </span>
+    </div>
+</div>
+"""
+st.markdown(coat_img_html, unsafe_allow_html=True)
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
 # ============================================================
