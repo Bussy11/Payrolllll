@@ -22,24 +22,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Guaranteed Inline SVG Badges (No external links, zero blocking)
-SVG_COAT_OF_ARMS = """
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="70" height="70">
-  <circle cx="60" cy="60" r="56" fill="#008751" stroke="#ffffff" stroke-width="4"/>
-  <rect x="35" y="35" width="50" height="50" rx="8" fill="#ffffff"/>
-  <text x="60" y="58" font-size="24" text-anchor="middle" fill="#008751">🇳🇬</text>
-  <text x="60" y="75" font-size="9" font-weight="900" text-anchor="middle" fill="#008751">NIGERIA</text>
-</svg>
-"""
-
-SVG_EFCC_LOGO = """
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="70" height="70">
-  <circle cx="60" cy="60" r="56" fill="#d32f2f" stroke="#008751" stroke-width="4"/>
-  <text x="60" y="52" font-size="18" font-weight="900" text-anchor="middle" fill="#ffffff">EFCC</text>
-  <text x="60" y="72" font-size="9" font-weight="bold" text-anchor="middle" fill="#ffffff">FORENSIC</text>
-</svg>
-"""
-
 # Custom Styling
 st.markdown("""
     <style>
@@ -54,32 +36,25 @@ st.markdown("""
     }
     .top-header {
         background-color: #ffffff;
-        padding: 20px;
+        padding: 15px;
         border-radius: 12px;
         border: 2px solid #008751;
         box-shadow: 0px 4px 15px rgba(0, 135, 81, 0.15);
         text-align: center;
         margin-bottom: 15px;
     }
-    .logo-row {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-        margin-bottom: 10px;
-    }
     .top-title {
         color: #008751;
         font-weight: 900;
-        font-size: 24px;
+        font-size: 22px;
         text-transform: uppercase;
-        margin: 0;
+        margin: 5px 0 2px 0;
     }
     .top-sub {
         color: #1b5e20;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
-        margin-top: 5px;
+        margin: 0;
     }
     .stButton>button {
         background-color: #008751 !important;
@@ -90,21 +65,32 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
-# TOP HEADER WITH VECTOR BADGES
+# TOP HEADER WITH LOCAL REPO IMAGES
 # ============================================================
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
-header_html = f"""
-<div class="top-header">
-    <div class="logo-row">
-        <div>{SVG_COAT_OF_ARMS}</div>
-        <div>{SVG_EFCC_LOGO}</div>
-    </div>
-    <p class="top-title">Federal Republic of Nigeria</p>
-    <p class="top-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
-</div>
-"""
-st.markdown(header_html, unsafe_allow_html=True)
+col_logo1, col_title, col_logo2 = st.columns([1, 4, 1])
+
+with col_logo1:
+    try:
+        st.image("coat_of_arms.jpg", width=75)
+    except:
+        st.image("coat_of_arms.png", width=75)
+
+with col_title:
+    st.markdown("""
+        <div class="top-header">
+            <p class="top-title">Federal Republic of Nigeria</p>
+            <p class="top-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col_logo2:
+    try:
+        st.image("efcc_logo.jpg", width=75)
+    except:
+        st.image("efcc_logo.png", width=75)
+
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
 # ============================================================
