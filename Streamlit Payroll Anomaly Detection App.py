@@ -33,9 +33,9 @@ st.markdown("""
     /* Header Banner Styling */
     .nigeria-banner {
         background: linear-gradient(90deg, #008751 0%, #008751 33%, #ffffff 33%, #ffffff 66%, #008751 66%, #008751 100%);
-        height: 10px;
+        height: 12px;
         border-radius: 4px;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
     }
     
     .official-header {
@@ -44,15 +44,15 @@ st.markdown("""
         padding: 20px;
         border-radius: 12px;
         border: 2px solid #008751;
-        box-shadow: 0px 4px 12px rgba(0, 135, 81, 0.1);
-        margin-bottom: 25px;
+        box-shadow: 0px 4px 12px rgba(0, 135, 81, 0.15);
+        margin-bottom: 20px;
     }
     
     .official-title {
         color: #008751;
         font-family: 'Helvetica Neue', sans-serif;
         font-weight: 800;
-        font-size: 26px;
+        font-size: 24px;
         margin-top: 10px;
         margin-bottom: 5px;
         text-transform: uppercase;
@@ -61,11 +61,18 @@ st.markdown("""
     
     .official-subtitle {
         color: #2e7d32;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
         margin-bottom: 0px;
     }
     
+    .coat-img {
+        max-width: 120px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
     /* Card Container Styles */
     .card-box {
         background-color: #ffffff;
@@ -88,24 +95,28 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
-# OFFICIAL NIGERIAN HEADER & EMBLEM DISPLAY
+# OFFICIAL NIGERIAN HEADER & COAT OF ARMS
 # ============================================================
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
-col_logo1, col_logo2, col_logo3 = st.columns([1, 2, 1])
-with col_logo2:
-    st.markdown("""
-        <div class="official-header">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Coat_of_arms_of_Nigeria.svg/300px-Coat_of_arms_of_Nigeria.svg.png" width="90" alt="Coat of Arms of Nigeria">
-            <div class="official-title">Federal Republic of Nigeria</div>
-            <div class="official-subtitle">AI Payroll Anomaly Detection & Fraud Audit System</div>
-        </div>
-    """, unsafe_allow_html=True)
+# Reliable Coat of Arms Image URL with alternative source
+coat_of_arms_url = "https://raw.githubusercontent.com/datasets/geo-boundaries/master/data/AGO.png" # Standard fallback
+official_coat_url = "https://upload.wikimedia.org/wikipedia/commons/b/bc/Coat_of_arms_of_Nigeria.svg"
+
+st.markdown(f"""
+    <div class="official-header">
+        <img class="coat-img" src="{official_coat_url}" 
+             onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/197/197398.png';" 
+             alt="Coat of Arms of Nigeria">
+        <div class="official-title">Federal Republic of Nigeria</div>
+        <div class="official-subtitle">AI Payroll Anomaly Detection & Fraud Audit System</div>
+    </div>
+""", unsafe_allow_html=True)
 
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
 # ============================================================
-# STEP 1: USER AUTHORIZATION & REGISTRATION (ON MAIN SCREEN)
+# STEP 1: USER AUTHORIZATION & REGISTRATION (MAIN SCREEN)
 # ============================================================
 st.header("🔑 Step 1: User Authorization & Registration")
 
@@ -231,162 +242,4 @@ for column in df.columns:
         converted_values = pd.to_numeric(cleaned_values, errors="coerce")
         non_empty_count = df[column].notna().sum()
         if non_empty_count > 0:
-            conversion_rate = converted_values.notna().sum() / non_empty_count
-            if conversion_rate >= 0.80:
-                df[column] = converted_values
-
-df = df.drop_duplicates().copy()
-
-# Feature Selection
-numeric_columns = df.select_dtypes(include=[np.number]).columns.tolist()
-identifier_words = ["id", "employeeid", "staffid", "recordnumber", "bank_account"]
-
-feature_columns = [
-    col for col in numeric_columns
-    if col.lower() not in identifier_words
-]
-
-X = df[feature_columns].copy()
-X = X.replace([np.inf, -np.inf], np.nan).dropna(axis=1, how="all")
-feature_columns = X.columns.tolist()
-
-if len(feature_columns) == 0:
-    st.error("No valid numerical features found for machine learning detection.")
-    st.stop()
-
-X = X.fillna(X.median())
-varying_columns = X.columns[X.nunique() > 1].tolist()
-X = X[varying_columns]
-feature_columns = X.columns.tolist()
-
-col_clean1, col_clean2, col_clean3 = st.columns(3)
-col_clean1.metric("Total Records", len(df))
-col_clean2.metric("Clean Features Count", len(feature_columns))
-col_clean3.metric("Selected Features", ", ".join(feature_columns[:3]))
-
-st.divider()
-
-# ============================================================
-# STEP 4: AI ANOMALY DETECTION (ISOLATION FOREST)
-# ============================================================
-st.header("🤖 Step 4: AI Model Training & Anomaly Detection")
-
-contamination_rate = st.slider(
-    "Expected Anomaly Sensitivity Rate (%):",
-    min_value=1,
-    max_value=20,
-    value=5
-) / 100.0
-
-if len(X) < 10:
-    st.error("At least 10 records are required to train the machine learning model.")
-    st.stop()
-
-X_train, X_test = train_test_split(X, test_size=0.20, random_state=42)
-
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
-model = IsolationForest(
-    n_estimators=200,
-    contamination=contamination_rate,
-    random_state=42
-)
-model.fit(X_train_scaled)
-
-test_scores = model.decision_function(X_test_scaled)
-test_predictions = model.predict(X_test_scaled)
-
-all_scaled = scaler.transform(X)
-all_predictions = model.predict(all_scaled)
-
-results = df.copy()
-results["AnomalyStatus"] = np.where(all_predictions == -1, "Flagged for Review", "No Anomaly Flag")
-results["AnomalyScore"] = model.decision_function(all_scaled)
-
-flagged_records = results[results["AnomalyStatus"] == "Flagged for Review"].copy()
-
-# Summary Metrics
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("Analyzed Records", len(results))
-m2.metric("Flagged Anomalies", len(flagged_records))
-m3.metric("Normal Records", len(results) - len(flagged_records))
-m4.metric("Flagged Percentage", f"{round(len(flagged_records) / len(results) * 100, 2)}%")
-
-st.subheader("🚩 Records Flagged for Review")
-if len(flagged_records) > 0:
-    st.dataframe(flagged_records, use_container_width=True)
-else:
-    st.success("No anomaly flags detected under the current sensitivity rate.")
-
-st.divider()
-
-# ============================================================
-# STEP 5: VISUALIZATIONS
-# ============================================================
-st.header("📊 Step 5: Payroll Analysis Analytics")
-
-col_fig1, col_fig2 = st.columns(2)
-
-with col_fig1:
-    fig, ax = plt.subplots(figsize=(6, 4))
-    status_counts = results["AnomalyStatus"].value_counts().reindex(
-        ["No Anomaly Flag", "Flagged for Review"], fill_value=0
-    )
-    bars = ax.bar(status_counts.index, status_counts.values, color=["#008751", "#d32f2f"])
-    
-    for bar in bars:
-        height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height, f'{int(height)}', ha='center', va='bottom')
-        
-    ax.set_title("Payroll Classification Summary", fontsize=12, fontweight='bold')
-    ax.set_ylabel("Record Count")
-    plt.tight_layout()
-    st.pyplot(fig)
-
-with col_fig2:
-    fig2, ax2 = plt.subplots(figsize=(6, 4))
-    ax2.hist(results["AnomalyScore"], bins=20, color="#008751", edgecolor="black")
-    ax2.set_title("Anomaly Score Distribution", fontsize=12, fontweight='bold')
-    ax2.set_xlabel("Anomaly Score (Lower = More Anomalous)")
-    ax2.set_ylabel("Frequency")
-    plt.tight_layout()
-    st.pyplot(fig2)
-
-st.divider()
-
-# ============================================================
-# STEP 6: REPORT GENERATION & DOWNLOAD
-# ============================================================
-st.header("📄 Step 6: Audit Report Generation")
-
-report_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-summary_df = pd.DataFrame({
-    "ReportItem": [
-        "SystemName", "ReportDateTime", "AuditorName", "AuditorContact",
-        "TotalRecords", "FlaggedRecords", "PercentageFlagged", "Algorithm"
-    ],
-    "Value": [
-        "AI Payroll Anomaly Detection System (Nigeria)", report_time,
-        full_name, contact_number, len(results), len(flagged_records),
-        f"{round(len(flagged_records) / len(results) * 100, 2)}%", "Isolation Forest"
-    ]
-})
-
-zip_buffer = io.BytesIO()
-
-with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
-    zip_file.writestr("payroll_summary.csv", summary_df.to_csv(index=False))
-    zip_file.writestr("full_payroll_results.csv", results.to_csv(index=False))
-    zip_file.writestr("flagged_payroll_anomalies.csv", flagged_records.to_csv(index=False))
-
-st.download_button(
-    label="📦 Download Complete Official Audit Package (.ZIP)",
-    data=zip_buffer.getvalue(),
-    file_name=f"Payroll_Audit_Report_{datetime.now().strftime('%Y%m%d')}.zip",
-    mime="application/zip"
-)
-
-st.caption("Federal Republic of Nigeria • Official Audit & AI Payroll Fraud Inspection Portal")
+            conversion_rate = converted_
