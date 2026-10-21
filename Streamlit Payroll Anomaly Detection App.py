@@ -22,26 +22,17 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Custom CSS
 st.markdown("""
     <style>
     .stApp {
         background-color: #f7f9f8;
-        background-image: radial-gradient(#008751 0.75px, transparent 0.75px), radial-gradient(#008751 0.75px, #f7f9f8 0.75px);
-        background-size: 30px 30px;
-        background-position: 0 0, 15px 15px;
-    }
-    .nigeria-banner {
-        background: linear-gradient(90deg, #008751 0%, #008751 33%, #ffffff 33%, #ffffff 66%, #008751 66%, #008751 100%);
-        height: 10px;
-        border-radius: 4px;
-        margin-bottom: 20px;
     }
     .top-header {
         background-color: #ffffff;
-        padding: 20px;
-        border-radius: 12px;
+        padding: 15px;
+        border-radius: 10px;
         border: 2px solid #008751;
-        box-shadow: 0px 4px 15px rgba(0, 135, 81, 0.15);
         text-align: center;
         margin-bottom: 20px;
     }
@@ -50,7 +41,7 @@ st.markdown("""
         font-weight: 900;
         font-size: 22px;
         text-transform: uppercase;
-        margin: 10px 0 2px 0;
+        margin: 0;
     }
     .top-header-sub {
         color: #1b5e20;
@@ -58,20 +49,10 @@ st.markdown("""
         font-weight: 700;
         margin: 0;
     }
-    .content-card {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 10px;
-        border-left: 5px solid #008751;
-        box-shadow: 0px 2px 10px rgba(0,0,0,0.05);
-        margin-bottom: 15px;
-    }
     .stButton>button {
         background-color: #008751 !important;
         color: white !important;
         font-weight: bold !important;
-        border-radius: 6px !important;
-        border: none !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -79,28 +60,21 @@ st.markdown("""
 # ============================================================
 # TOP HEADER
 # ============================================================
-st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
-
-st.markdown(
-    '<div class="top-header">'
-    '<div style="display: flex; justify-content: center; align-items: center; gap: 30px; margin-bottom: 5px;">'
-    '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Coat_of_arms_of_Nigeria.svg/250px-Coat_of_arms_of_Nigeria.svg.png" width="65" alt="Coat of Arms">'
-    '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Economic_and_Financial_Crimes_Commission_logo.png/250px-Economic_and_Financial_Crimes_Commission_logo.png" width="65" alt="EFCC Logo">'
-    '</div>'
-    '<p class="top-header-title">Federal Republic of Nigeria</p>'
-    '<p class="top-header-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>'
-    '</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
+col_a, col_b, col_c = st.columns([1, 2, 1])
+with col_b:
+    st.markdown("""
+        <div class="top-header">
+            <p class="top-header-title">Federal Republic of Nigeria</p>
+            <p class="top-header-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
+        </div>
+    """, unsafe_allow_html=True)
 
 # ============================================================
 # SIDEBAR NAVIGATION
 # ============================================================
 st.sidebar.title("📌 Navigation Menu")
 page = st.sidebar.radio(
-    "Select Portal Page:",
+    "Select Page:",
     [
         "1. Authorization & Registration",
         "2. Data Input & Cleaning",
@@ -125,7 +99,7 @@ if page == "1. Authorization & Registration":
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Authorization Check")
-        auth_choice = st.radio("Do you have official authorization to access this forensic system?", ["YES", "NO"], index=0)
+        auth_choice = st.radio("Do you have official authorization?", ["YES", "NO"], index=0)
         
         if auth_choice == "NO":
             st.session_state.auth_verified = False
@@ -138,19 +112,10 @@ if page == "1. Authorization & Registration":
         st.subheader("Investigator Details")
         st.session_state.full_name = st.text_input("Full Name:", value=st.session_state.full_name)
         st.session_state.address = st.text_input("Official Address:", value=st.session_state.address)
-        st.session_state.contact = st.text_input("Contact Phone Number:", value=st.session_state.contact)
+        st.session_state.contact = st.text_input("Contact Number:", value=st.session_state.contact)
 
     if st.session_state.auth_verified:
-        st.markdown(
-            '<div class="content-card">'
-            '<h3 style="color: #008751; margin-top: 0;">🏛️ Session Active</h3>'
-            f'<p><b>Investigator:</b> {st.session_state.full_name}</p>'
-            f'<p><b>Address:</b> {st.session_state.address}</p>'
-            f'<p><b>Contact:</b> {st.session_state.contact}</p>'
-            '<p style="color: #2e7d32; font-weight: 600; margin-bottom: 0;">Authorization verified successfully. Proceed to Page 2 via the sidebar.</p>'
-            '</div>',
-            unsafe_allow_html=True
-        )
+        st.success("🏛️ Session Active: " + st.session_state.full_name)
 
 # ============================================================
 # PAGE 2: DATA INPUT & CLEANING
@@ -173,7 +138,7 @@ elif page == "2. Data Input & Cleaning":
         uploaded_file = st.file_uploader("Upload Payroll CSV file", type=["csv"])
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
-            st.success(f"Successfully loaded: {uploaded_file.name}")
+            st.success("Successfully loaded uploaded CSV file.")
         else:
             st.info("Awaiting CSV upload...")
             st.stop()
@@ -197,9 +162,8 @@ elif page == "2. Data Input & Cleaning":
         st.success("Sample Nigerian payroll dataset generated with test anomalies.")
 
     st.session_state.df = df
-    st.subheader("Data Preview & Cleaning Summary")
+    st.subheader("Data Preview")
     st.dataframe(df.head(10), use_container_width=True)
-    st.info("✅ Data cleaned successfully. Proceed to Page 3 via the sidebar.")
 
 # ============================================================
 # PAGE 3: AI MODEL ANALYSIS
@@ -307,16 +271,23 @@ elif page == "5. Q&A Assistant & Kudos":
     
     q_input = st.text_input("Ask a question about the system:")
     if q_input:
-        ans = "I do not have a prepared answer for that question. Try asking about the algorithm, training, or report."
+        ans = "I do not have a prepared answer for that question."
         if "algorithm" in q_input.lower() or "isolation" in q_input.lower():
             ans = "The system uses Isolation Forest, an unsupervised machine learning algorithm."
         elif "training" in q_input.lower():
             ans = "Training uses 80% of the dataset to learn standard payroll patterns."
         elif "report" in q_input.lower():
             ans = "The report contains summary statistics, full data results, and flagged anomaly tables packaged into a ZIP file."
-        st.info(f"**Assistant Response:** {ans}")
+        st.info("Assistant Response: " + ans)
         
     st.divider()
     st.subheader("🌟 Leave Your Kudos")
     with st.form("kudos_form"):
-        k_name = st.text_input("Your Name /
+        k_name = st.text_input("Your Name or Department:", value=st.session_state.full_name)
+        k_rating = st.select_slider("Rate System Performance:", options=["Poor", "Fair", "Good", "Very Good", "Excellent"], value="Excellent")
+        k_comment = st.text_area("Your Kudos or Comments:", value="Great application!")
+        submitted = st.form_submit_button("Submit Kudos")
+        if submitted:
+            st.success("🎉 Thank you! Your kudos have been logged successfully.")
+
+st.sidebar.caption("Federal Republic of Nigeria • Official Portal")
