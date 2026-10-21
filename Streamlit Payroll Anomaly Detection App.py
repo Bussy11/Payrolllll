@@ -112,12 +112,13 @@ page = st.sidebar.radio(
         "5. Q&A Assistant & Kudos"
     ]
 )
+
 if "auth_verified" not in st.session_state:
     st.session_state.auth_verified = False
     st.session_state.full_name = ""
     st.session_state.address = ""
     st.session_state.contact = ""
-    
+
 # ============================================================
 # PAGE 1: AUTHORIZATION & REGISTRATION
 # ============================================================
@@ -142,8 +143,18 @@ if page == "1. Authorization & Registration":
         st.session_state.address = st.text_input("Official Address:", value=st.session_state.address)
         st.session_state.contact = st.text_input("Contact Number:", value=st.session_state.contact)
 
-    if st.session_state.auth_verified:
-        st.success("🏛️ Session Active: " + st.session_state.full_name)
+    if st.session_state.auth_verified and st.session_state.full_name:
+        st.markdown(
+            f"""
+            <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #008751; margin-top: 15px;">
+                <h4 style="color: #008751; margin: 0 0 5px 0;">🏛️ Official Session Active</h4>
+                <p style="margin: 0; color: #1b5e20; font-weight: 600;">
+                    Welcome, <b>{st.session_state.full_name}</b>. Your credentials have been logged for this forensic session. You may now proceed to Data Input & Cleaning via the sidebar.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 # ============================================================
 # PAGE 2: DATA INPUT & CLEANING
