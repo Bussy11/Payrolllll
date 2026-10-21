@@ -112,13 +112,12 @@ page = st.sidebar.radio(
         "5. Q&A Assistant & Kudos"
     ]
 )
-
 if "auth_verified" not in st.session_state:
-    st.session_state.auth_verified = True
-    st.session_state.full_name = "Oluwabusayo Juwon AMPITAN"
-    st.session_state.address = "OG1 Ogba Ogun compound Ejuku Yagba East"
-    st.session_state.contact = "08161999686"
-
+    st.session_state.auth_verified = False
+    st.session_state.full_name = ""
+    st.session_state.address = ""
+    st.session_state.contact = ""
+    
 # ============================================================
 # PAGE 1: AUTHORIZATION & REGISTRATION
 # ============================================================
