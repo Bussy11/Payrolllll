@@ -99,7 +99,7 @@ st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 # SIDEBAR NAVIGATION
 # ============================================================
 st.sidebar.title("📌 Navigation Menu")
-page = = st.sidebar.radio(
+page = st.sidebar.radio(
     "Select Portal Page:",
     [
         "1. Authorization & Registration",
@@ -326,4 +326,4 @@ elif page == "5. Q&A Assistant & Kudos":
         if submitted:
             st.success(f"🎉 Thank you, {k_name}! Your kudos have been logged successfully.")
 
-st.sidebar.caption("Federal Republic of Nigeria.official portal")
+st.sidebar.caption("Federal Republic of Nigeria • Official Portal")
