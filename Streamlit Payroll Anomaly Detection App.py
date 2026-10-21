@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from datetime import datetime
 import zipfile
 import io
+import os
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -65,17 +66,19 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
-# TOP HEADER WITH LOCAL REPO IMAGES
+# TOP HEADER WITH .JPEG SUPPORT
 # ============================================================
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
 col_logo1, col_title, col_logo2 = st.columns([1, 4, 1])
 
 with col_logo1:
-    try:
+    if os.path.exists("coat_of_arms.jpeg"):
+        st.image("coat_of_arms.jpeg", width=75)
+    elif os.path.exists("coat_of_arms.jpg"):
         st.image("coat_of_arms.jpg", width=75)
-    except:
-        st.image("coat_of_arms.png", width=75)
+    else:
+        st.write("🇳🇬 Coat of Arms")
 
 with col_title:
     st.markdown("""
@@ -86,10 +89,12 @@ with col_title:
     """, unsafe_allow_html=True)
 
 with col_logo2:
-    try:
+    if os.path.exists("efcc_logo.jpeg"):
+        st.image("efcc_logo.jpeg", width=75)
+    elif os.path.exists("efcc_logo.jpg"):
         st.image("efcc_logo.jpg", width=75)
-    except:
-        st.image("efcc_logo.png", width=75)
+    else:
+        st.write("🦅 EFCC Logo")
 
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
