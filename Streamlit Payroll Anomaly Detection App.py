@@ -22,32 +22,32 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS
+# Custom Styling
 st.markdown("""
     <style>
     .stApp {
         background-color: #f7f9f8;
     }
-    .top-header {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 10px;
-        border: 2px solid #008751;
-        text-align: center;
-        margin-bottom: 20px;
+    .nigeria-banner {
+        background: linear-gradient(90deg, #008751 0%, #008751 33%, #ffffff 33%, #ffffff 66%, #008751 66%, #008751 100%);
+        height: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
     }
-    .top-header-title {
+    .top-title {
         color: #008751;
         font-weight: 900;
-        font-size: 22px;
+        font-size: 24px;
         text-transform: uppercase;
+        text-align: center;
         margin: 0;
     }
-    .top-header-sub {
+    .top-sub {
         color: #1b5e20;
         font-size: 14px;
         font-weight: 700;
-        margin: 0;
+        text-align: center;
+        margin-top: 5px;
     }
     .stButton>button {
         background-color: #008751 !important;
@@ -58,16 +58,23 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
-# TOP HEADER
+# TOP HEADER WITH NATIVE IMAGES
 # ============================================================
-col_a, col_b, col_c = st.columns([1, 2, 1])
-with col_b:
-    st.markdown("""
-        <div class="top-header">
-            <p class="top-header-title">Federal Republic of Nigeria</p>
-            <p class="top-header-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
-        </div>
-    """, unsafe_allow_html=True)
+st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
+
+col_logo1, col_title, col_logo2 = st.columns([1, 4, 1])
+
+with col_logo1:
+    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Coat_of_arms_of_Nigeria.svg/200px-Coat_of_arms_of_Nigeria.svg.png", width=80)
+
+with col_title:
+    st.markdown('<p class="top-title">Federal Republic of Nigeria</p>', unsafe_allow_html=True)
+    st.markdown('<p class="top-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>', unsafe_allow_html=True)
+
+with col_logo2:
+    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Economic_and_Financial_Crimes_Commission_logo.png/200px-Economic_and_Financial_Crimes_Commission_logo.png", width=80)
+
+st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
 # ============================================================
 # SIDEBAR NAVIGATION
