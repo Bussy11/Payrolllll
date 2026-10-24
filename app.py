@@ -19,8 +19,7 @@ warnings.filterwarnings("ignore")
 st.set_page_config(
     page_title="Federal Republic of Nigeria - AI Payroll Forensic Portal",
     page_icon="🇳🇬",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 # Custom Styling
@@ -99,30 +98,44 @@ with col_logo2:
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
 # ============================================================
-# SIDEBAR NAVIGATION
+# INITIALIZE SESSION STATES
 # ============================================================
-st.sidebar.title("📌 Navigation Menu")
-page = st.sidebar.radio(
-    "Select Page:",
-    [
-        "1. Authorization & Registration",
-        "2. Data Input & Cleaning",
-        "3. AI Model Analysis",
-        "4. Visualizations & Reports",
-        "5. Q&A Assistant & Kudos"
-    ]
-)
-
 if "auth_verified" not in st.session_state:
     st.session_state.auth_verified = False
     st.session_state.full_name = ""
     st.session_state.address = ""
     st.session_state.contact = ""
 
+if "step" not in st.session_state:
+    st.session_state.step = 1
+
+# ============================================================
+# MAIN BODY STEP NAVIGATION BAR (CENTRAL CLICK BUTTONS)
+# ============================================================
+st.markdown("### 📌 Navigation Menu")
+step_names = {
+    1: "1. Authorization & Registration",
+    2: "2. Data Input & Cleaning",
+    3: "3. AI Model Analysis",
+    4: "4. Visualizations & Reports",
+    5: "5. Q&A Assistant & Kudos"
+}
+
+nav_cols = st.columns(5)
+for s_num, s_name in step_names.items():
+    with nav_cols[s_num - 1]:
+        btn_label = f"📍 Step {s_num}" if st.session_state.step != s_num else f"👉 [{s_num}]"
+        if st.button(btn_label, use_container_width=True, key=f"nav_btn_{s_num}"):
+            st.session_state.step = s_num
+            st.rerun()
+
+st.markdown(f"**Current Active Section:** `{step_names[st.session_state.step]}`")
+st.divider()
+
 # ============================================================
 # PAGE 1: AUTHORIZATION & REGISTRATION
 # ============================================================
-if page == "1. Authorization & Registration":
+if st.session_state.step == 1:
     st.header("🔑 Investigator Authorization & Registration")
     
     col1, col2 = st.columns(2)
@@ -149,23 +162,27 @@ if page == "1. Authorization & Registration":
             <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #008751; margin-top: 15px;">
                 <h4 style="color: #008751; margin: 0 0 5px 0;">🏛️ Official Session Active</h4>
                 <p style="margin: 0; color: #1b5e20; font-weight: 600;">
-                    Welcome, <b>{st.session_state.full_name}</b>. Your credentials have been logged for this forensic session. You may now proceed to Data Input & Cleaning via the sidebar.
+                    Welcome, <b>{st.session_state.full_name}</b>. Your credentials have been logged for this forensic session.
                 </p>
             </div>
             """,
             unsafe_allow_html=True
         )
 
+    st.markdown("")
+    if st.button("Continue to Data Input & Cleaning ➡️", use_container_width=True):
+        st.session_state.step = 2
+        st.rerun()
+
 # ============================================================
 # PAGE 2: DATA INPUT & CLEANING
 # ============================================================
-elif page == "2. Data Input & Cleaning":
+elif st.session_state.step == 2:
     st.header("📂 Payroll Data Input & Cleaning")
     
     if not st.session_state.auth_verified:
         st.warning("⚠️ Please complete Authorization on Page 1 first.")
-        st.stop()
-        
+    
     data_choice = st.radio(
         "Select Dataset Source:",
         ["Generate Sample Payroll Dataset (200 Records)", "Upload External Payroll CSV File"],
@@ -180,7 +197,6 @@ elif page == "2. Data Input & Cleaning":
             st.success("Successfully loaded uploaded CSV file.")
         else:
             st.info("Awaiting CSV upload...")
-            st.stop()
     else:
         np.random.seed(42)
         num_emp = 200
@@ -200,14 +216,26 @@ elif page == "2. Data Input & Cleaning":
         df.loc[25, "NetSalary"] = df.loc[25, "BasicSalary"] + df.loc[25, "Allowances"] - df.loc[25, "Deductions"]
         st.success("Sample Nigerian payroll dataset generated with test anomalies.")
 
-    st.session_state.df = df
-    st.subheader("Data Preview")
-    st.dataframe(df.head(10), use_container_width=True)
+    if df is not None:
+        st.session_state.df = df
+        st.subheader("Data Preview")
+        st.dataframe(df.head(10), use_container_width=True)
+
+    st.markdown("")
+    col_b1, col_b2 = st.columns(2)
+    with col_b1:
+        if st.button("⬅️ Back to Authorization", use_container_width=True):
+            st.session_state.step = 1
+            st.rerun()
+    with col_b2:
+        if st.button("Continue to AI Model Analysis ➡️", use_container_width=True):
+            st.session_state.step = 3
+            st.rerun()
 
 # ============================================================
 # PAGE 3: AI MODEL ANALYSIS
 # ============================================================
-elif page == "3. AI Model Analysis":
+elif st.session_state.step == 3:
     st.header("🤖 AI Model Training & Anomaly Detection")
     
     if not st.session_state.auth_verified or "df" not in st.session_state:
@@ -226,86 +254,136 @@ elif page == "3. AI Model Analysis":
     
     if len(X) < 10:
         st.error("At least 10 records required for analysis.")
-        st.stop()
+    else:
+        X_train, X_test = train_test_split(X, test_size=0.20, random_state=42)
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
         
-    X_train, X_test = train_test_split(X, test_size=0.20, random_state=42)
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    
-    model = IsolationForest(n_estimators=200, contamination=contamination_rate, random_state=42)
-    model.fit(X_train_scaled)
-    
-    all_preds = model.predict(scaler.transform(X))
-    results = df.copy()
-    results["AnomalyStatus"] = np.where(all_preds == -1, "Flagged for Review", "No Anomaly Flag")
-    results["AnomalyScore"] = model.decision_function(scaler.transform(X))
-    
-    st.session_state.results = results
-    st.session_state.flagged_records = results[results["AnomalyStatus"] == "Flagged for Review"].copy()
-    
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Analyzed", len(results))
-    m2.metric("Flagged", len(st.session_state.flagged_records))
-    m3.metric("Normal", len(results) - len(st.session_state.flagged_records))
-    m4.metric("Percentage", f"{round(len(st.session_state.flagged_records) / len(results) * 100, 2)}%")
-    
-    st.subheader("🚩 Flagged Payroll Anomalies")
-    st.dataframe(st.session_state.flagged_records, use_container_width=True)
+        model = IsolationForest(n_estimators=200, contamination=contamination_rate, random_state=42)
+        model.fit(X_train_scaled)
+        
+        all_preds = model.predict(scaler.transform(X))
+        results = df.copy()
+        results["AnomalyStatus"] = np.where(all_preds == -1, "Flagged for Review", "No Anomaly Flag")
+        results["AnomalyScore"] = model.decision_function(scaler.transform(X))
+        
+        st.session_state.results = results
+        st.session_state.flagged_records = results[results["AnomalyStatus"] == "Flagged for Review"].copy()
+        
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("Analyzed", len(results))
+        m2.metric("Flagged", len(st.session_state.flagged_records))
+        m3.metric("Normal", len(results) - len(st.session_state.flagged_records))
+        m4.metric("Percentage", f"{round(len(st.session_state.flagged_records) / len(results) * 100, 2)}%")
+        
+        st.subheader("🚩 Flagged Payroll Anomalies")
+        st.dataframe(st.session_state.flagged_records, use_container_width=True)
+
+    st.markdown("")
+    col_b1, col_b2 = st.columns(2)
+    with col_b1:
+        if st.button("⬅️ Back to Data Input", use_container_width=True):
+            st.session_state.step = 2
+            st.rerun()
+    with col_b2:
+        if st.button("Continue to Visualizations & Reports ➡️", use_container_width=True):
+            st.session_state.step = 4
+            st.rerun()
 
 # ============================================================
 # PAGE 4: VISUALIZATIONS & REPORTS
 # ============================================================
-elif page == "4. Visualizations & Reports":
+elif st.session_state.step == 4:
     st.header("📊 Payroll Analytics & Report Export")
     
     if "results" not in st.session_state:
-        st.warning("⚠️ Please run AI Model Analysis on Page 3 first.")
-        st.stop()
+        st.warning("⚠️ Please run AI Model Analysis on Step 3 first.")
+    else:
+        results = st.session_state.results
+        flagged_records = st.session_state.flagged_records
         
-    results = st.session_state.results
-    flagged_records = st.session_state.flagged_records
-    
-    col_v1, col_v2 = st.columns(2)
-    with col_v1:
-        fig, ax = plt.subplots(figsize=(6, 4))
-        counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
-        bars = ax.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
-        for bar in bars:
-            h = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom')
-        ax.set_title("Classification Summary", fontweight='bold')
-        st.pyplot(fig)
+        # 3 Graphs Layout
+        col_v1, col_v2, col_v3 = st.columns(3)
         
-    with col_v2:
-        fig2, ax2 = plt.subplots(figsize=(6, 4))
-        ax2.hist(results["AnomalyScore"], bins=20, color="#008751", edgecolor="black")
-        ax2.set_title("Anomaly Score Distribution", fontweight='bold')
-        st.pyplot(fig2)
+        # Graph 1: Bar Chart of Anomaly Classification Counts
+        with col_v1:
+            fig1, ax1 = plt.subplots(figsize=(5, 4))
+            counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
+            bars = ax1.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
+            for bar in bars:
+                h = bar.get_height()
+                ax1.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
+            ax1.set_title("Anomaly Status Count", fontweight='bold', fontsize=10)
+            ax1.tick_params(axis='x', rotation=15)
+            st.pyplot(fig1)
+            
+        # Graph 2: Pie Chart with Green and Red Indicators showing Percentage
+        with col_v2:
+            fig2, ax2 = plt.subplots(figsize=(5, 4))
+            pie_counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
+            colors = ["#008751", "#d32f2f"] # Green for normal, Red for flagged
+            ax2.pie(
+                pie_counts.values, 
+                labels=pie_counts.index, 
+                colors=colors, 
+                autopct='%1.1f%%', 
+                startangle=90,
+                textprops={'fontsize': 8}
+            )
+            ax2.set_title("Anomaly Percentage Share", fontweight='bold', fontsize=10)
+            st.pyplot(fig2)
+
+        # Graph 3: Bar Chart showing Average Salary per State (if State column exists)
+        with col_v3:
+            fig3, ax3 = plt.subplots(figsize=(5, 4))
+            if "State" in results.columns and "BasicSalary" in results.columns:
+                state_avg = results.groupby("State")["BasicSalary"].mean()
+                bars3 = ax3.bar(state_avg.index, state_avg.values, color="#1b5e20")
+                for bar in bars3:
+                    h = bar.get_height()
+                    ax3.text(bar.get_x() + bar.get_width()/2., h, f'{int(h):,}', ha='center', va='bottom', fontsize=8)
+                ax3.set_title("Avg Basic Salary by State", fontweight='bold', fontsize=10)
+            else:
+                ax3.text(0.5, 0.5, "No State Data Available", ha='center', va='center')
+                ax3.set_title("State Distribution", fontweight='bold', fontsize=10)
+            st.pyplot(fig3)
+            
+        st.divider()
+        st.subheader("📦 Download Audit Package")
+        summary_df = pd.DataFrame({
+            "ReportItem": ["System", "DateTime", "Investigator", "Contact", "TotalRecords", "FlaggedRecords"],
+            "Value": ["Federal Republic of Nigeria Payroll System", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), st.session_state.full_name, st.session_state.contact, len(results), len(flagged_records)]
+        })
         
-    st.divider()
-    st.subheader("📦 Download Audit Package")
-    summary_df = pd.DataFrame({
-        "ReportItem": ["System", "DateTime", "Investigator", "Contact", "TotalRecords", "FlaggedRecords"],
-        "Value": ["Federal Republic of Nigeria Payroll System", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), st.session_state.full_name, st.session_state.contact, len(results), len(flagged_records)]
-    })
-    
-    zip_buffer = io.BytesIO()
-    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr("nigeria_payroll_summary.csv", summary_df.to_csv(index=False))
-        zf.writestr("full_results.csv", results.to_csv(index=False))
-        zf.writestr("flagged_records.csv", flagged_records.to_csv(index=False))
-        
-    st.download_button(
-        label="📥 Download Official Audit ZIP Package",
-        data=zip_buffer.getvalue(),
-        file_name=f"Nigeria_Payroll_Audit_{datetime.now().strftime('%Y%m%d')}.zip",
-        mime="application/zip"
-    )
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr("nigeria_payroll_summary.csv", summary_df.to_csv(index=False))
+            zf.writestr("full_results.csv", results.to_csv(index=False))
+            zf.writestr("flagged_records.csv", flagged_records.to_csv(index=False))
+            
+        st.download_button(
+            label="📥 Download Official Audit ZIP Package",
+            data=zip_buffer.getvalue(),
+            file_name=f"Nigeria_Payroll_Audit_{datetime.now().strftime('%Y%m%d')}.zip",
+            mime="application/zip",
+            use_container_width=True
+        )
+
+    st.markdown("")
+    col_b1, col_b2 = st.columns(2)
+    with col_b1:
+        if st.button("⬅️ Back to AI Analysis", use_container_width=True):
+            st.session_state.step = 3
+            st.rerun()
+    with col_b2:
+        if st.button("Continue to Q&A & Kudos ➡️", use_container_width=True):
+            st.session_state.step = 5
+            st.rerun()
 
 # ============================================================
 # PAGE 5: Q&A ASSISTANT & KUDOS
 # ============================================================
-elif page == "5. Q&A Assistant & Kudos":
+elif st.session_state.step == 5:
     st.header("❓ Project Q & A Assistant & User Kudos")
     
     q_input = st.text_input("Ask a question about the system:")
@@ -329,4 +407,11 @@ elif page == "5. Q&A Assistant & Kudos":
         if submitted:
             st.success("🎉 Thank you! Your kudos have been logged successfully.")
 
-st.sidebar.caption("Federal Republic of Nigeria • Official Portal")
+    st.markdown("")
+    if st.button("⬅️ Back to Visualizations & Reports", use_container_width=True):
+        st.session_state.step = 4
+        st.rerun()
+
+# Footer
+st.markdown("---")
+st.caption("Federal Republic of Nigeria • Official Portal")
