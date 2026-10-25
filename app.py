@@ -345,7 +345,7 @@ elif st.session_state.step == 4:
             counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
             bars = ax1.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
             for bar in bars:
-            h = bar.get_height()
+             h = bar.get_height()
             ax1.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
             ax1.set_title("Anomaly Status Count", fontweight='bold', fontsize=10)
             ax1.tick_params(axis='x', rotation=15)
