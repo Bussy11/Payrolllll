@@ -109,22 +109,26 @@ if "auth_verified" not in st.session_state:
 if "step" not in st.session_state:
     st.session_state.step = 1
 
+if "dev_index" not in st.session_state:
+    st.session_state.dev_index = 0
+
 # ============================================================
-# MAIN BODY STEP NAVIGATION BAR (CENTRAL CLICK BUTTONS)
+# MAIN BODY STEP NAVIGATION BAR (6 CENTRAL BUTTONS)
 # ============================================================
 st.markdown("### 📌 Navigation Menu")
 step_names = {
-    1: "1. Authorization & Registration",
-    2: "2. Data Input & Cleaning",
-    3: "3. AI Model Analysis",
-    4: "4. Visualizations & Reports",
-    5: "5. Q&A Assistant & Kudos"
+    1: "1. Authorization",
+    2: "2. Data Input",
+    3: "3. AI Analysis",
+    4: "4. Visualizations",
+    5: "5. Q&A & Kudos",
+    6: "6. Developers"
 }
 
-nav_cols = st.columns(5)
+nav_cols = st.columns(6)
 for s_num, s_name in step_names.items():
     with nav_cols[s_num - 1]:
-        btn_label = f"📍 Step {s_num}" if st.session_state.step != s_num else f"👉 [{s_num}]"
+        btn_label = f"📍 {s_num}" if st.session_state.step != s_num else f"👉 [{s_num}]"
         if st.button(btn_label, use_container_width=True, key=f"nav_btn_{s_num}"):
             st.session_state.step = s_num
             st.rerun()
@@ -141,7 +145,6 @@ if st.session_state.step == 1:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Authorization Check")
-        # Neutral option added so it doesn't auto-select YES or NO
         auth_choice = st.radio(
             "Do you have official authorization?", 
             ["-- Please Select --", "YES", "NO"], 
@@ -313,10 +316,8 @@ elif st.session_state.step == 4:
         results = st.session_state.results
         flagged_records = st.session_state.flagged_records
         
-        # 3 Graphs Layout
         col_v1, col_v2, col_v3 = st.columns(3)
         
-        # Graph 1: Bar Chart of Anomaly Classification Counts
         with col_v1:
             fig1, ax1 = plt.subplots(figsize=(5, 4))
             counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
@@ -328,11 +329,10 @@ elif st.session_state.step == 4:
             ax1.tick_params(axis='x', rotation=15)
             st.pyplot(fig1)
             
-        # Graph 2: Pie Chart with Green and Red Indicators showing Percentage
         with col_v2:
             fig2, ax2 = plt.subplots(figsize=(5, 4))
             pie_counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
-            colors = ["#008751", "#d32f2f"] # Green for normal, Red for flagged
+            colors = ["#008751", "#d32f2f"]
             ax2.pie(
                 pie_counts.values, 
                 labels=pie_counts.index, 
@@ -344,7 +344,6 @@ elif st.session_state.step == 4:
             ax2.set_title("Anomaly Percentage Share", fontweight='bold', fontsize=10)
             st.pyplot(fig2)
 
-        # Graph 3: Bar Chart showing Average Salary per State (if State column exists)
         with col_v3:
             fig3, ax3 = plt.subplots(figsize=(5, 4))
             if "State" in results.columns and "BasicSalary" in results.columns:
@@ -419,8 +418,95 @@ elif st.session_state.step == 5:
             st.success("🎉 Thank you! Your kudos have been logged successfully.")
 
     st.markdown("")
-    if st.button("⬅️ Back to Visualizations & Reports", use_container_width=True):
-        st.session_state.step = 4
+    col_b1, col_b2 = st.columns(2)
+    with col_b1:
+        if st.button("⬅️ Back to Visualizations", use_container_width=True):
+            st.session_state.step = 4
+            st.rerun()
+    with col_b2:
+        if st.button("Continue to Developers ➡️", use_container_width=True):
+            st.session_state.step = 6
+            st.rerun()
+
+# ============================================================
+# PAGE 6: DEVELOPERS TEAM PAGE SLIDESHOW
+# ============================================================
+elif st.session_state.step == 6:
+    st.header("👥 Meet the Development Team")
+    st.markdown("Browse through the team members who built this forensic audit platform.")
+
+    # Developer Profiles List
+    developers = [
+        {
+            "name": "A. O. Juwon",
+            "address": "Ejuku, Yagba East LGA",
+            "state": "Kogi State",
+            "education": "NCE, B.Sc., M.Sc. (In View)",
+            "role": "Team Lead and Project Problem Analyzer",
+            "marital_status": "Married",
+            "image": "developer1.jpeg"  # Replace with developer1.jpg/jpeg in your folder
+        },
+        {
+            "name": "Team Member 2",
+            "address": "Lagos Central",
+            "state": "Lagos State",
+            "education": "B.Sc. Computer Science",
+            "role": "Frontend & Streamlit Specialist",
+            "marital_status": "Single",
+            "image": "developer2.jpeg"
+        },
+        {
+            "name": "Team Member 3",
+            "address": "FCT Abuja",
+            "state": "Abuja",
+            "education": "B.Sc. Cybersecurity",
+            "role": "Backend & AI Model Engineer",
+            "marital_status": "Single",
+            "image": "developer3.jpeg"
+        }
+    ]
+
+    # Navigation buttons (Previous and Next)
+    col_prev, col_mid, col_next = st.columns([1, 2, 1])
+
+    with col_prev:
+        if st.button("⬅️ Previous Developer", use_container_width=True):
+            st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
+            st.rerun()
+
+    with col_next:
+        if st.button("Next Developer ➡️", use_container_width=True):
+            st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
+            st.rerun()
+
+    current_dev = developers[st.session_state.dev_index]
+
+    st.markdown("---")
+    c1, c2 = st.columns([1, 2])
+
+    with c1:
+        img_file = current_dev["image"]
+        img_alt = img_file.replace(".jpeg", ".jpg") if ".jpeg" in img_file else img_file.replace(".jpg", ".jpeg")
+        
+        if os.path.exists(img_file):
+            st.image(img_file, use_column_width=True)
+        elif os.path.exists(img_alt):
+            st.image(img_alt, use_column_width=True)
+        else:
+            st.info(f"🖼️ [Image file '{current_dev['image']}' not found in folder. Please add your JPEG picture.]")
+
+    with c2:
+        st.subheader(current_dev["name"])
+        st.markdown(f"📍 **Address:** {current_dev['address']}")
+        st.markdown(f"🏛️ **State:** {current_dev['state']}")
+        st.markdown(f"🎓 **Education:** {current_dev['education']}")
+        st.markdown(f"💼 **Role:** {current_dev['role']}")
+        st.markdown(f"💍 **Marital Status:** {current_dev['marital_status']}")
+        st.caption(f"Developer {st.session_state.dev_index + 1} of {len(developers)}")
+
+    st.markdown("")
+    if st.button("⬅️ Back to Q&A Assistant & Kudos", use_container_width=True):
+        st.session_state.step = 5
         st.rerun()
 
 # Footer
