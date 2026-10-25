@@ -510,22 +510,22 @@ elif st.session_state.step == 6:
             "image": "developer 8.jpeg"
         },
         {
-            "name": "Team Member 9",
-            "address": "Address 9",
-            "state": "State 9",
-            "education": "Education 9",
-            "role": "Role 9",
+            "name": "VICTOR IWALAYE",
+            "address": "IYARA, IJUMU LG",
+            "state": "KOGI STATE",
+            "education": "NATIONAL DEPLOMA",
+            "role": "AI TEAM",
             "marital_status": "Single",
-            "image": "developer9.jpeg"
+            "image": "developer 9.jpeg"
         },
         {
-            "name": "Team Member 10",
-            "address": "Address 10",
-            "state": "State 10",
-            "education": "Education 10",
-            "role": "Role 10",
-            "marital_status": "Single",
-            "image": "developer10.jpeg"
+            "name": "RACHAEL OLORUNMAIYE",
+            "address": "FCT NIGERIA",
+            "state": "KOGI STATE",
+            "education": "B.Sc",
+            "role": "DATA COLLECTION TEAM",
+            "marital_status": " N/A",
+            "image": "developer 10.jpeg"
         },
         {
             "name": "Team Member 11",
