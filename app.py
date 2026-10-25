@@ -494,7 +494,7 @@ elif st.session_state.step == 6:
             "image": "developer 1.jpeg"
         },
         {
-            "name": "ADEYEMI MARY OWOEYE",
+            "name": "ADEYEMI MARY MARVELOUS",
             "address": "ODO-ERE, YAGBA WEST LG",
             "state": "KOGI STATE",
             "education": "B. Sc",
