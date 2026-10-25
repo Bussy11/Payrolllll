@@ -140,11 +140,7 @@ for s_num, s_name in step_names.items():
 st.markdown(f"**Current Active Section:** `{step_names[st.session_state.step]}`")
 st.divider()
 
-# 
-        with col2:
-        st.subheader("Investigator Details")
-        
-    # ============================================================
+# ============================================================
 # PAGE 1: AUTHORIZATION & REGISTRATION
 # ============================================================
 if st.session_state.step == 1:
