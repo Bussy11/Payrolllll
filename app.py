@@ -141,9 +141,17 @@ if st.session_state.step == 1:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Authorization Check")
-        auth_choice = st.radio("Do you have official authorization?", ["YES", "NO"], index=0)
+        # Neutral option added so it doesn't auto-select YES or NO
+        auth_choice = st.radio(
+            "Do you have official authorization?", 
+            ["-- Please Select --", "YES", "NO"], 
+            index=0
+        )
         
-        if auth_choice == "NO":
+        if auth_choice == "-- Please Select --":
+            st.session_state.auth_verified = False
+            st.info("ℹ️ Please select your authorization status to proceed.")
+        elif auth_choice == "NO":
             st.session_state.auth_verified = False
             st.error("⛔ ACCESS DENIED: Proper authorization is required.")
         else:
@@ -171,8 +179,11 @@ if st.session_state.step == 1:
 
     st.markdown("")
     if st.button("Continue to Data Input & Cleaning ➡️", use_container_width=True):
-        st.session_state.step = 2
-        st.rerun()
+        if not st.session_state.auth_verified:
+            st.warning("⚠️ Please complete valid authorization first.")
+        else:
+            st.session_state.step = 2
+            st.rerun()
 
 # ============================================================
 # PAGE 2: DATA INPUT & CLEANING
@@ -181,7 +192,7 @@ elif st.session_state.step == 2:
     st.header("📂 Payroll Data Input & Cleaning")
     
     if not st.session_state.auth_verified:
-        st.warning("⚠️ Please complete Authorization on Page 1 first.")
+        st.warning("⚠️ Please complete Authorization on Step 1 first.")
     
     data_choice = st.radio(
         "Select Dataset Source:",
