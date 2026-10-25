@@ -205,21 +205,17 @@ elif st.session_state.step == 2:
 
     st.header("📂 Payroll Data Input & Cleaning")
     
-    data_choice = st.radio(
+     data_choice = st.radio(
         "Select Dataset Source:",
-        ["Generate Sample Payroll Dataset (200 Records)", "Upload External Payroll CSV File"],
-        horizontal=True
+        ["-- Please Select --", "Generate Sample Payroll Dataset (200 Records)", "Upload External Payroll CSV File"],
+        horizontal=True,
+        index=0
     )
     
     df = None
-    if "Upload" in data_choice:
-        uploaded_file = st.file_uploader("Upload Payroll CSV file", type=["csv"])
-        if uploaded_file is not None:
-            df = pd.read_csv(uploaded_file)
-            st.success("Successfully loaded uploaded CSV file.")
-        else:
-            st.info("Awaiting CSV upload...")
-    else:
+    if data_choice == "-- Please Select --":
+        st.info("ℹ️ Please select a dataset source above to proceed.")
+    elif "Generate" in data_choice:
         np.random.seed(42)
         num_emp = 200
         df = pd.DataFrame({
@@ -237,12 +233,19 @@ elif st.session_state.step == 2:
         df.loc[25, "Allowances"] = 200000.00
         df.loc[25, "NetSalary"] = df.loc[25, "BasicSalary"] + df.loc[25, "Allowances"] - df.loc[25, "Deductions"]
         st.success("Sample Nigerian payroll dataset generated with test anomalies.")
+    elif "Upload" in data_choice:
+        uploaded_file = st.file_uploader("Upload Payroll CSV file", type=["csv"])
+        if uploaded_file is not None:
+            df = pd.read_csv(uploaded_file)
+            st.success("Successfully loaded uploaded CSV file.")
+        else:
+            st.info("Awaiting CSV upload...")
 
     if df is not None:
         st.session_state.df = df
         st.subheader("Data Preview")
         st.dataframe(df.head(10), use_container_width=True)
-
+   
     st.markdown("")
     col_b1, col_b2 = st.columns(2)
     with col_b1:
