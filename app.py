@@ -184,7 +184,7 @@ if st.session_state.step == 1:
             unsafe_allow_html=True
         )
         
-# ============================================================
+  # ============================================================
 # PAGE 2: DATA INPUT & CLEANING
 # ============================================================
 elif st.session_state.step == 2:
@@ -194,12 +194,17 @@ elif st.session_state.step == 2:
         "Select Dataset Source:",
         ["— Please Select —", "Generate Sample Payroll Dataset (200 Records)", "Upload External Payroll CSV File"],
         horizontal=True,
-        index=0
+        index=0,
+        key="dataset_radio_choice"
     )
     
     df = None
     if data_choice == "— Please Select —":
+        # Clear existing dataframe in session state so user cannot proceed without selecting
+        if "df" in st.session_state:
+            del st.session_state.df
         st.info("ℹ️ Please select a dataset source above to proceed.")
+        
     elif "Generate" in data_choice:
         np.random.seed(42)
         num_emp = 200
@@ -218,12 +223,15 @@ elif st.session_state.step == 2:
         df.loc[25, "Allowances"] = 200000.00
         df.loc[25, "NetSalary"] = df.loc[25, "BasicSalary"] + df.loc[25, "Allowances"] - df.loc[25, "Deductions"]
         st.success("Sample Nigerian payroll dataset generated with test anomalies.")
+        
     elif "Upload" in data_choice:
         uploaded_file = st.file_uploader("Upload Payroll CSV file", type=["csv"])
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
             st.success("Successfully loaded uploaded CSV file.")
         else:
+            if "df" in st.session_state:
+                del st.session_state.df
             st.info("Awaiting CSV upload...")
 
     if df is not None:
@@ -245,7 +253,7 @@ elif st.session_state.step == 2:
                 st.rerun()
         if not can_proceed:
             st.caption("⚠️ Please select or generate a dataset to continue.")
-
+      
 # ============================================================
 # PAGE 3: AI MODEL ANALYSIS
 # ============================================================
