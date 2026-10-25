@@ -140,7 +140,11 @@ for s_num, s_name in step_names.items():
 st.markdown(f"**Current Active Section:** `{step_names[st.session_state.step]}`")
 st.divider()
 
-# ============================================================
+# 
+    with col2:
+        st.subheader("Investigator Details")
+        
+    # ============================================================
 # PAGE 1: AUTHORIZATION & REGISTRATION
 # ============================================================
 if st.session_state.step == 1:
@@ -171,7 +175,8 @@ if st.session_state.step == 1:
         st.session_state.address = st.text_input("Official Address:", value=st.session_state.address)
         st.session_state.contact = st.text_input("Contact Number:", value=st.session_state.contact)
 
-    if st.session_state.auth_verified and st.session_state.full_name:
+    # This condition displays the banner immediately when the name box has text and authorization is verified
+    if st.session_state.auth_verified and st.session_state.full_name.strip() != "":
         st.markdown(
             f"""
             <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #008751; margin-top: 15px;">
@@ -182,6 +187,17 @@ if st.session_state.step == 1:
             </div>
             """,
             unsafe_allow_html=True
+        )
+
+    st.markdown("")
+    if st.button("Continue to Data Input & Cleaning ➡️", use_container_width=True):
+        if not st.session_state.auth_verified:
+            st.warning("⚠️ Please complete valid authorization first.")
+        elif not st.session_state.full_name.strip():
+            st.warning("⚠️ Please enter your full name to proceed.")
+        else:
+            st.session_state.step = 2
+            st.rerun()
         )
         
   # ============================================================
