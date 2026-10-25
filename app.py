@@ -448,12 +448,12 @@ elif st.session_state.step == 6:
         },
         {
             "name": "Team Member 2",
-            "address": "Lagos Central",
-            "state": "Lagos State",
-            "education": "B.Sc. Computer Science",
-            "role": "Frontend & Streamlit Specialist",
-            "marital_status": "Single",
-            "image": "developer2.jpeg"
+            "address": "Odo Ere Yagba West LG",
+            "state": "Kogi state",
+            "education": "B.Sc. ",
+            "role": "Data Collection team and Asst. Group Leader",
+            "marital_status": "Married",
+            "image": "developer 2.jpeg"
         },
         {
             "name": "Team Member 3",
