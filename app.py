@@ -456,11 +456,11 @@ elif st.session_state.step == 6:
             "image": "developer 2.jpeg"
         },
         {
-            "name": "Team Member 3",
-            "address": "FCT Abuja",
-            "state": "Abuja",
-            "education": "B.Sc. Cybersecurity",
-            "role": "Backend & AI Model Engineer",
+            "name": "IBITOYE MAYOMIKUN JONATHAN",
+            "address": "ISANLU, YAGBA EAST LG",
+            "state": "KOGI STATE",
+            "education": "B.Eng, Ilorin",
+            "role": "Data collection Team Member",
             "marital_status": "Single",
             "image": "developer3.jpeg"
         }
