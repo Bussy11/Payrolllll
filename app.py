@@ -130,9 +130,13 @@ for s_num, s_name in step_names.items():
     with nav_cols[s_num - 1]:
         btn_label = f"📍 {s_num}" if st.session_state.step != s_num else f"👉 [{s_num}]"
         if st.button(btn_label, use_container_width=True, key=f"nav_btn_{s_num}"):
-            st.session_state.step = s_num
-            st.rerun()
-
+            # Security check: Block jumping past step 1 if not authorized
+            if s_num > 1 and not st.session_state.auth_verified:
+                st.warning("⛔ ACCESS LOCKED: Please complete and confirm valid authorization on Step 1 first.")
+            else:
+                st.session_state.step = s_num
+                st.rerun()
+                
 st.markdown(f"**Current Active Section:** `{step_names[st.session_state.step]}`")
 st.divider()
 
@@ -192,10 +196,14 @@ if st.session_state.step == 1:
 # PAGE 2: DATA INPUT & CLEANING
 # ============================================================
 elif st.session_state.step == 2:
-    st.header("📂 Payroll Data Input & Cleaning")
-    
     if not st.session_state.auth_verified:
-        st.warning("⚠️ Please complete Authorization on Step 1 first.")
+        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
+        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step2"):
+            st.session_state.step = 1
+            st.rerun()
+        st.stop()
+
+    st.header("📂 Payroll Data Input & Cleaning")
     
     data_choice = st.radio(
         "Select Dataset Source:",
@@ -250,10 +258,17 @@ elif st.session_state.step == 2:
 # PAGE 3: AI MODEL ANALYSIS
 # ============================================================
 elif st.session_state.step == 3:
+    if not st.session_state.auth_verified:
+        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
+        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step3"):
+            st.session_state.step = 1
+            st.rerun()
+        st.stop()
+
     st.header("🤖 AI Model Training & Anomaly Detection")
     
-    if not st.session_state.auth_verified or "df" not in st.session_state:
-        st.warning("⚠️ Please complete previous pages first.")
+    if "df" not in st.session_state:
+        st.warning("⚠️ Please complete Data Input (Step 2) first.")
         st.stop()
         
     df = st.session_state.df
@@ -308,6 +323,13 @@ elif st.session_state.step == 3:
 # PAGE 4: VISUALIZATIONS & REPORTS
 # ============================================================
 elif st.session_state.step == 4:
+    if not st.session_state.auth_verified:
+        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
+        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step4"):
+            st.session_state.step = 1
+            st.rerun()
+        st.stop()
+
     st.header("📊 Payroll Analytics & Report Export")
     
     if "results" not in st.session_state:
@@ -323,8 +345,8 @@ elif st.session_state.step == 4:
             counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
             bars = ax1.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
             for bar in bars:
-                h = bar.get_height()
-                ax1.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
+            h = bar.get_height()
+            ax1.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
             ax1.set_title("Anomaly Status Count", fontweight='bold', fontsize=10)
             ax1.tick_params(axis='x', rotation=15)
             st.pyplot(fig1)
@@ -394,6 +416,13 @@ elif st.session_state.step == 4:
 # PAGE 5: Q&A ASSISTANT & KUDOS
 # ============================================================
 elif st.session_state.step == 5:
+    if not st.session_state.auth_verified:
+        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
+        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step5"):
+            st.session_state.step = 1
+            st.rerun()
+        st.stop()
+
     st.header("❓ Project Q & A Assistant & User Kudos")
     
     q_input = st.text_input("Ask a question about the system:")
@@ -432,6 +461,13 @@ elif st.session_state.step == 5:
 # PAGE 6: DEVELOPERS TEAM PAGE SLIDESHOW (12 MEMBERS)
 # ============================================================
 elif st.session_state.step == 6:
+    if not st.session_state.auth_verified:
+        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
+        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step6"):
+            st.session_state.step = 1
+            st.rerun()
+        st.stop()
+
     st.header("👥 Meet the Development Team (12 Members)")
     st.markdown("Browse through the team members who built this forensic audit platform.")
 
@@ -451,7 +487,7 @@ elif st.session_state.step == 6:
             "address": "ODO-ERE, YAGBA WEST LG",
             "state": "KOGI STATE",
             "education": "B. Sc",
-            "role": "DATA COLLECTION TEAM ",
+            "role": "DATA COLLECTION TEAM",
             "marital_status": "MARRIED",
             "image": "developer 2.jpeg"
         },
@@ -488,7 +524,7 @@ elif st.session_state.step == 6:
             "state": "KOGI STATE",
             "education": "B. Sc, NCA, NBA (in view)",
             "role": "DATA COLLECTION TEAM",
-            "marital_status": "MARRIED ",
+            "marital_status": "MARRIED",
             "image": "developer 6.jpeg"
         },
         {
@@ -524,7 +560,7 @@ elif st.session_state.step == 6:
             "state": "KOGI STATE",
             "education": "B.Sc",
             "role": "DATA COLLECTION TEAM",
-            "marital_status": " N/A",
+            "marital_status": "N/A",
             "image": "developer 10.jpeg"
         },
         {
@@ -593,5 +629,3 @@ elif st.session_state.step == 6:
 # Footer
 st.markdown("---")
 st.caption("Federal Republic of Nigeria • Official Portal")
-
-    
