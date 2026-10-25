@@ -205,7 +205,7 @@ elif st.session_state.step == 2:
 
     st.header("📂 Payroll Data Input & Cleaning")
     
- data_choice = st.radio(
+    data_choice = st.radio(
         "Select Dataset Source:",
         ["-- Please Select --", "Generate Sample Payroll Dataset (200 Records)", "Upload External Payroll CSV File"],
         horizontal=True,
