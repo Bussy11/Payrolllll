@@ -462,7 +462,7 @@ elif st.session_state.step == 6:
             "education": "B.Eng, Ilorin",
             "role": "Data collection Team Member",
             "marital_status": "Single",
-            "image": "developer3.jpeg"
+            "image": "developer 3.jpeg"
         }
     ]
 
