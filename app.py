@@ -444,7 +444,7 @@ elif st.session_state.step == 6:
             "education": "NCE, B.Sc., M.Sc. (In View)",
             "role": "Team Lead and Project Problem Analyzer",
             "marital_status": "Married",
-            "image": "developer1.jpeg"  # Replace with developer1.jpg/jpeg in your folder
+            "image": "developer 1.jpeg"  # Replace with developer1.jpg/jpeg in your folder
         },
         {
             "name": "Team Member 2",
