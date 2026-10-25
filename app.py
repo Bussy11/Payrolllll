@@ -429,13 +429,13 @@ elif st.session_state.step == 5:
             st.rerun()
 
 # ============================================================
-# PAGE 6: DEVELOPERS TEAM PAGE SLIDESHOW
+# PAGE 6: DEVELOPERS TEAM PAGE SLIDESHOW (12 MEMBERS)
 # ============================================================
 elif st.session_state.step == 6:
-    st.header("👥 Meet the Development Team")
+    st.header("👥 Meet the Development Team (12 Members)")
     st.markdown("Browse through the team members who built this forensic audit platform.")
 
-    # Developer Profiles List
+    # Developer Profiles List (12 Members)
     developers = [
         {
             "name": "A. O. Juwon",
@@ -444,71 +444,57 @@ elif st.session_state.step == 6:
             "education": "NCE, B.Sc., M.Sc. (In View)",
             "role": "Team Lead and Project Problem Analyzer",
             "marital_status": "Married",
-            "image": "developer 1.jpeg"  # Replace with developer1.jpg/jpeg in your folder
+            "image": "developer 1.jpeg"
         },
         {
             "name": "ADEYEMI MARY OWOEYE",
-            "address": "Odo Ere Yagba West LG",
-            "state": "Kogi state",
-            "education": "B.Sc. ",
-            "role": "Data Collection team and Asst. Group Leader",
-            "marital_status": "Married",
+            "address": "ODO-ERE, YAGBA WEST LG",
+            "state": "KOGI STATE",
+            "education": "B. Sc.",
+            "role": "DATA COLLECTION TEAM MEMBER",
+            "marital_status": "MARRIED",
             "image": "developer 2.jpeg"
         },
         {
             "name": "IBITOYE MAYOMIKUN JONATHAN",
             "address": "ISANLU, YAGBA EAST LG",
             "state": "KOGI STATE",
-            "education": "B.Eng, Ilorin",
-            "role": "Data collection Team Member",
+            "education": "B. Eng, ILORIN",
+            "role": "DATA COLLECTION TEAM",
             "marital_status": "Single",
             "image": "developer 3.jpeg"
-        }
-    ]
-
-    # Navigation buttons (Previous and Next)
-    col_prev, col_mid, col_next = st.columns([1, 2, 1])
-
-    with col_prev:
-        if st.button("⬅️ Previous Developer", use_container_width=True):
-            st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
-            st.rerun()
-
-    with col_next:
-        if st.button("Next Developer ➡️", use_container_width=True):
-            st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
-            st.rerun()
-
-    current_dev = developers[st.session_state.dev_index]
-
-    st.markdown("---")
-    c1, c2 = st.columns([1, 2])
-
-    with c1:
-        img_file = current_dev["image"]
-        img_alt = img_file.replace(".jpeg", ".jpg") if ".jpeg" in img_file else img_file.replace(".jpg", ".jpeg")
-        
-        if os.path.exists(img_file):
-            st.image(img_file, use_column_width=True)
-        elif os.path.exists(img_alt):
-            st.image(img_alt, use_column_width=True)
-        else:
-            st.info(f"🖼️ [Image file '{current_dev['image']}' not found in folder. Please add your JPEG picture.]")
-
-    with c2:
-        st.subheader(current_dev["name"])
-        st.markdown(f"📍 **Address:** {current_dev['address']}")
-        st.markdown(f"🏛️ **State:** {current_dev['state']}")
-        st.markdown(f"🎓 **Education:** {current_dev['education']}")
-        st.markdown(f"💼 **Role:** {current_dev['role']}")
-        st.markdown(f"💍 **Marital Status:** {current_dev['marital_status']}")
-        st.caption(f"Developer {st.session_state.dev_index + 1} of {len(developers)}")
-
-    st.markdown("")
-    if st.button("⬅️ Back to Q&A Assistant & Kudos", use_container_width=True):
-        st.session_state.step = 5
-        st.rerun()
-
-# Footer
-st.markdown("---")
-st.caption("Federal Republic of Nigeria • Official Portal")
+        },
+        {
+            "name": "OLUKAIYE OLUGBENGA TIMOTHY",
+            "address": "BOLORUNDURO KABBA",
+            "state": "KOGI STATE",
+            "education": "B. Eng, CUSTECH Osara",
+            "role": "Problem Solving Team Asst.",
+            "marital_status": "Single",
+            "image": "developer 4.jpeg"
+        },
+        {
+            "name": "BABALOLA MARVELOUS ITUNUOLUWA",
+            "address": "EGBE, YAGBA WEST LG",
+            "state": "KOGI STATE",
+            "education": "B. Sc, NURSING, FED_UNIVERSITY LKJ",
+            "role": "DEMONSTRATION TEAM",
+            "marital_status": "Single",
+            "image": "developer 5.jpeg"
+        },
+        {
+            "name": "Team Member 6",
+            "address": "Address 6",
+            "state": "State 6",
+            "education": "Education 6",
+            "role": "Role 6",
+            "marital_status": "Single",
+            "image": "developer6.jpeg"
+        },
+        {
+            "name": "Team Member 7",
+            "address": "Address 7",
+            "state": "State 7",
+            "education": "Education 7",
+            "role": "Role 7",
+            "marital_status": "Single",
