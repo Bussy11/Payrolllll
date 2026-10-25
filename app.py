@@ -183,37 +183,22 @@ if st.session_state.step == 1:
             """,
             unsafe_allow_html=True
         )
-
-    st.markdown("")
-    if st.button("Continue to Data Input & Cleaning ➡️", use_container_width=True):
-        if not st.session_state.auth_verified:
-            st.warning("⚠️ Please complete valid authorization first.")
-        else:
-            st.session_state.step = 2
-            st.rerun()
-
+        
 # ============================================================
 # PAGE 2: DATA INPUT & CLEANING
 # ============================================================
 elif st.session_state.step == 2:
-    if not st.session_state.auth_verified:
-        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
-        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step2"):
-            st.session_state.step = 1
-            st.rerun()
-        st.stop()
-
     st.header("📂 Payroll Data Input & Cleaning")
     
     data_choice = st.radio(
         "Select Dataset Source:",
-        ["-- Please Select --", "Generate Sample Payroll Dataset (200 Records)", "Upload External Payroll CSV File"],
+        ["— Please Select —", "Generate Sample Payroll Dataset (200 Records)", "Upload External Payroll CSV File"],
         horizontal=True,
         index=0
     )
     
     df = None
-    if data_choice == "-- Please Select --":
+    if data_choice == "— Please Select —":
         st.info("ℹ️ Please select a dataset source above to proceed.")
     elif "Generate" in data_choice:
         np.random.seed(42)
@@ -245,7 +230,7 @@ elif st.session_state.step == 2:
         st.session_state.df = df
         st.subheader("Data Preview")
         st.dataframe(df.head(10), use_container_width=True)
-   
+
     st.markdown("")
     col_b1, col_b2 = st.columns(2)
     with col_b1:
@@ -253,9 +238,13 @@ elif st.session_state.step == 2:
             st.session_state.step = 1
             st.rerun()
     with col_b2:
-        if st.button("Continue to AI Model Analysis ➡️", use_container_width=True):
-            st.session_state.step = 3
-            st.rerun()
+        can_proceed = "df" in st.session_state and st.session_state.df is not None
+        if st.button("Continue to AI Model Analysis ➡️", use_container_width=True, disabled=not can_proceed):
+            if can_proceed:
+                st.session_state.step = 3
+                st.rerun()
+        if not can_proceed:
+            st.caption("⚠️ Please select or generate a dataset to continue.")
 
 # ============================================================
 # PAGE 3: AI MODEL ANALYSIS
