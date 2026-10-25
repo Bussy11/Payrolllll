@@ -507,7 +507,7 @@ elif st.session_state.step == 6:
             "education": "B Sc. (Econs)",
             "role": "DEMONSTRATION TEAM MEMBER",
             "marital_status": "MARRIED",
-            "image": "developer8.jpeg"
+            "image": "developer 8.jpeg"
         },
         {
             "name": "Team Member 9",
