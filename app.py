@@ -519,8 +519,8 @@ elif st.session_state.step == 6:
             "image": "developer 9.jpeg"
         },
         {
-            "name": "RACHAEL OLORUNMAIYE",
-            "address": "FCT NIGERIA",
+            "name": "RACHEAL OLORUNMAIYE",
+            "address": "KABBA BUNNU, LG",
             "state": "KOGI STATE",
             "education": "B.Sc",
             "role": "DATA COLLECTION TEAM",
@@ -528,13 +528,13 @@ elif st.session_state.step == 6:
             "image": "developer 10.jpeg"
         },
         {
-            "name": "Team Member 11",
-            "address": "Address 11",
-            "state": "State 11",
-            "education": "Education 11",
-            "role": "Role 11",
+            "name": "ISREAL ADEOLA OLUMAIYEGUN",
+            "address": "ODO ERE, YAGBA WEST LG",
+            "state": "KOGI STATE",
+            "education": "B. Sc. (Econs) KSU, kabba",
+            "role": "DEMONSTRATION TEAM MEMBER",
             "marital_status": "Single",
-            "image": "developer11.jpeg"
+            "image": "developer 11.jpeg"
         },
         {
             "name": "Team Member 12",
