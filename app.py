@@ -83,7 +83,7 @@ with col_title:
     st.markdown("""
         <div class="top-header">
             <p class="top-title">Federal Republic of Nigeria</p>
-            <p class="top-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
+            <p class="top-sub">AI Payroll Anomaly Detection SYSTEM</p>
         </div>
     """, unsafe_allow_html=True)
 
