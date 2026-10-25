@@ -102,9 +102,9 @@ st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 # ============================================================
 if "auth_verified" not in st.session_state:
     st.session_state.auth_verified = True
-    st.session_state.full_name = "Default Investigator"
-    st.session_state.address = "Abuja, Nigeria"
-    st.session_state.contact = "Official Portal"
+    st.session_state.full_name = 
+    st.session_state.address =
+    st.session_state.contact=
 
 if "step" not in st.session_state:
     st.session_state.step = 2
