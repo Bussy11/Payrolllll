@@ -501,12 +501,12 @@ elif st.session_state.step == 6:
             "image": "developer 7.jpeg"
         },
         {
-            "name": "Team Member 8",
-            "address": "Address 8",
-            "state": "State 8",
-            "education": "Education 8",
-            "role": "Role 8",
-            "marital_status": "Single",
+            "name": "AKANKU TAIYE OLIWAPEMOSIRE",
+            "address": "ITEDO ISANLU, YAGBA EAST LG",
+            "state": "KOGI STATE",
+            "education": "B Sc. (Econs)",
+            "role": "DEMONSTRATION TEAM MEMBER",
+            "marital_status": "MARRIED",
             "image": "developer8.jpeg"
         },
         {
