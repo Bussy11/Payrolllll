@@ -447,58 +447,58 @@ elif st.session_state.step == 6:
             "image": "developer 1.jpeg"
         },
         {
-            "name": "Team Member 2",
-            "address": "Address 2",
-            "state": "State 2",
-            "education": "Education 2",
-            "role": "Role 2",
+            "name": "ADEYEMI MARY OWOEYE",
+            "address": "ODO-ERE, YAGBA WEST LG",
+            "state": "KOGI STATE",
+            "education": "B. Sc",
+            "role": "DATA COLLECTION TEAM ",
             "marital_status": "Single",
             "image": "developer 2.jpeg"
         },
         {
-            "name": "Team Member 3",
-            "address": "Address 3",
-            "state": "State 3",
-            "education": "Education 3",
-            "role": "Role 3",
+            "name": "IBITOYE MAYOMIKUN JONATHAN",
+            "address": "ISANLU, YAGBA EAST LG",
+            "state": "KOGI STATE",
+            "education": "B. ENG. ILORIN",
+            "role": "DATA COLLECTION TEAM",
             "marital_status": "Single",
-            "image": "developer3.jpeg"
+            "image": "developer 3.jpeg"
         },
         {
-            "name": "Team Member 4",
-            "address": "Address 4",
-            "state": "State 4",
-            "education": "Education 4",
-            "role": "Role 4",
+            "name": "OLUKAIYE OLUGBENGA TIMOTHY",
+            "address": "BOLORUNDURO KABBA, KABBA BUNU LG",
+            "state": "KOGI STATE",
+            "education": "B. ENG, CUSTECH Osara",
+            "role": "PROBLEM SOLVING TEAM",
             "marital_status": "Single",
-            "image": "developer4.jpeg"
+            "image": "developer 4.jpeg"
         },
         {
-            "name": "Team Member 5",
-            "address": "Address 5",
-            "state": "State 5",
-            "education": "Education 5",
-            "role": "Role 5",
+            "name": "KOMOLAFE BABATUNDE RICHARD",
+            "address": "AYETORO GBEDE IJUMU LG",
+            "state": "KOGI STATE",
+            "education": "B. Sc.",
+            "role": "DEMONSTRATION TEAM",
             "marital_status": "Single",
-            "image": "developer5.jpeg"
+            "image": "developer 5.jpeg"
         },
         {
-            "name": "Team Member 6",
-            "address": "Address 6",
-            "state": "State 6",
-            "education": "Education 6",
-            "role": "Role 6",
-            "marital_status": "Single",
-            "image": "developer6.jpeg"
+            "name": "ADEWUMI BISIRIYU TUNDE",
+            "address": "IFE_OLUKOTUN, YAGBA EAST LG",
+            "state": "KOGI STATE",
+            "education": "B. Sc, NCA, NBA (in view)",
+            "role": "DATA COLLECTION TEAM",
+            "marital_status": "MARRIED ",
+            "image": "developer 6.jpeg"
         },
         {
-            "name": "Team Member 7",
-            "address": "Address 7",
-            "state": "State 7",
-            "education": "Education 7",
-            "role": "Role 7",
+            "name": "BABALOLA MARVELOUS ITUNUOLUWA",
+            "address": "EGBE, YAGBA WEST",
+            "state": "KOGI STATE",
+            "education": "B. Sc (NURSING) FED.UNI LOKOJA",
+            "role": "DEMONSTRATION TEAM MEMBER",
             "marital_status": "Single",
-            "image": "developer7.jpeg"
+            "image": "developer 7.jpeg"
         },
         {
             "name": "Team Member 8",
