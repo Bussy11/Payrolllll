@@ -141,7 +141,7 @@ st.markdown(f"**Current Active Section:** `{step_names[st.session_state.step]}`"
 st.divider()
 
 # 
-    with col2:
+        with col2:
         st.subheader("Investigator Details")
         
     # ============================================================
