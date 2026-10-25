@@ -447,40 +447,40 @@ elif st.session_state.step == 6:
             "image": "developer 1.jpeg"
         },
         {
-            "name": "ADEYEMI MARY OWOEYE",
-            "address": "ODO-ERE, YAGBA WEST LG",
-            "state": "KOGI STATE",
-            "education": "B. Sc.",
-            "role": "DATA COLLECTION TEAM MEMBER",
-            "marital_status": "MARRIED",
+            "name": "Team Member 2",
+            "address": "Address 2",
+            "state": "State 2",
+            "education": "Education 2",
+            "role": "Role 2",
+            "marital_status": "Single",
             "image": "developer 2.jpeg"
         },
         {
-            "name": "IBITOYE MAYOMIKUN JONATHAN",
-            "address": "ISANLU, YAGBA EAST LG",
-            "state": "KOGI STATE",
-            "education": "B. Eng, ILORIN",
-            "role": "DATA COLLECTION TEAM",
+            "name": "Team Member 3",
+            "address": "Address 3",
+            "state": "State 3",
+            "education": "Education 3",
+            "role": "Role 3",
             "marital_status": "Single",
-            "image": "developer 3.jpeg"
+            "image": "developer3.jpeg"
         },
         {
-            "name": "OLUKAIYE OLUGBENGA TIMOTHY",
-            "address": "BOLORUNDURO KABBA",
-            "state": "KOGI STATE",
-            "education": "B. Eng, CUSTECH Osara",
-            "role": "Problem Solving Team Asst.",
+            "name": "Team Member 4",
+            "address": "Address 4",
+            "state": "State 4",
+            "education": "Education 4",
+            "role": "Role 4",
             "marital_status": "Single",
-            "image": "developer 4.jpeg"
+            "image": "developer4.jpeg"
         },
         {
-            "name": "BABALOLA MARVELOUS ITUNUOLUWA",
-            "address": "EGBE, YAGBA WEST LG",
-            "state": "KOGI STATE",
-            "education": "B. Sc, NURSING, FED_UNIVERSITY LKJ",
-            "role": "DEMONSTRATION TEAM",
+            "name": "Team Member 5",
+            "address": "Address 5",
+            "state": "State 5",
+            "education": "Education 5",
+            "role": "Role 5",
             "marital_status": "Single",
-            "image": "developer 5.jpeg"
+            "image": "developer5.jpeg"
         },
         {
             "name": "Team Member 6",
@@ -498,3 +498,100 @@ elif st.session_state.step == 6:
             "education": "Education 7",
             "role": "Role 7",
             "marital_status": "Single",
+            "image": "developer7.jpeg"
+        },
+        {
+            "name": "Team Member 8",
+            "address": "Address 8",
+            "state": "State 8",
+            "education": "Education 8",
+            "role": "Role 8",
+            "marital_status": "Single",
+            "image": "developer8.jpeg"
+        },
+        {
+            "name": "Team Member 9",
+            "address": "Address 9",
+            "state": "State 9",
+            "education": "Education 9",
+            "role": "Role 9",
+            "marital_status": "Single",
+            "image": "developer9.jpeg"
+        },
+        {
+            "name": "Team Member 10",
+            "address": "Address 10",
+            "state": "State 10",
+            "education": "Education 10",
+            "role": "Role 10",
+            "marital_status": "Single",
+            "image": "developer10.jpeg"
+        },
+        {
+            "name": "Team Member 11",
+            "address": "Address 11",
+            "state": "State 11",
+            "education": "Education 11",
+            "role": "Role 11",
+            "marital_status": "Single",
+            "image": "developer11.jpeg"
+        },
+        {
+            "name": "Team Member 12",
+            "address": "Address 12",
+            "state": "State 12",
+            "education": "Education 12",
+            "role": "Role 12",
+            "marital_status": "Single",
+            "image": "developer12.jpeg"
+        }
+    ]
+
+    # Navigation buttons (Previous and Next)
+    col_prev, col_mid, col_next = st.columns([1, 2, 1])
+
+    with col_prev:
+        if st.button("⬅️ Previous Developer", use_container_width=True):
+            st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
+            st.rerun()
+
+    with col_next:
+        if st.button("Next Developer ➡️", use_container_width=True):
+            st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
+            st.rerun()
+
+    current_dev = developers[st.session_state.dev_index]
+
+    st.markdown("---")
+    c1, c2 = st.columns([1, 2])
+
+    with c1:
+        img_file = current_dev["image"]
+        img_alt = img_file.replace(".jpeg", ".jpg") if ".jpeg" in img_file else img_file.replace(".jpg", ".jpeg")
+        
+        if os.path.exists(img_file):
+            st.image(img_file, use_column_width=True)
+        elif os.path.exists(img_alt):
+            st.image(img_alt, use_column_width=True)
+        else:
+            st.info(f"🖼️ [Image file '{current_dev['image']}' not found in folder. Please add your JPEG picture.]")
+
+    with c2:
+        st.subheader(current_dev["name"])
+        st.markdown(f"📍 **Address:** {current_dev['address']}")
+        st.markdown(f"🏛️ **State:** {current_dev['state']}")
+        st.markdown(f"🎓 **Education:** {current_dev['education']}")
+        st.markdown(f"💼 **Role:** {current_dev['role']}")
+        st.markdown(f"💍 **Marital Status:** {current_dev['marital_status']}")
+        st.caption(f"Developer {st.session_state.dev_index + 1} of {len(developers)}")
+
+    st.markdown("")
+    if st.button("⬅️ Back to Q&A Assistant & Kudos", use_container_width=True):
+        st.session_state.step = 5
+        st.rerun()
+
+# Footer
+st.markdown("---")
+st.caption("Federal Republic of Nigeria • Official Portal")
+
+    
