@@ -98,16 +98,16 @@ with col_logo2:
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
 # ============================================================
-# INITIALIZE SESSION STATES
+# INITIALIZE SESSION STATES (STEP 2 SET AS DEFAULT)
 # ============================================================
 if "auth_verified" not in st.session_state:
-    st.session_state.auth_verified = False
-    st.session_state.full_name = ""
-    st.session_state.address = ""
-    st.session_state.contact = ""
+    st.session_state.auth_verified = True
+    st.session_state.full_name = "Default Investigator"
+    st.session_state.address = "Abuja, Nigeria"
+    st.session_state.contact = "Official Portal"
 
 if "step" not in st.session_state:
-    st.session_state.step = 1
+    st.session_state.step = 2
 
 if "dev_index" not in st.session_state:
     st.session_state.dev_index = 0
