@@ -501,7 +501,7 @@ elif st.session_state.step == 6:
             "image": "developer 7.jpeg"
         },
         {
-            "name": "AKANKU TAIYE OLIWAPEMOSIRE",
+            "name": "AKANKU TAIYE OLUWAPEMISIRE",
             "address": "ITEDO ISANLU, YAGBA EAST LG",
             "state": "KOGI STATE",
             "education": "B Sc. (Econs)",
