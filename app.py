@@ -447,7 +447,7 @@ elif st.session_state.step == 6:
             "image": "developer 1.jpeg"  # Replace with developer1.jpg/jpeg in your folder
         },
         {
-            "name": "Team Member 2",
+            "name": "ADEYEMI MARY OWOEYE",
             "address": "Odo Ere Yagba West LG",
             "state": "Kogi state",
             "education": "B.Sc. ",
