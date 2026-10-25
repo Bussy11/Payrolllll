@@ -452,7 +452,7 @@ elif st.session_state.step == 6:
             "state": "KOGI STATE",
             "education": "B. Sc",
             "role": "DATA COLLECTION TEAM ",
-            "marital_status": "Single",
+            "marital_status": "MARRIED",
             "image": "developer 2.jpeg"
         },
         {
