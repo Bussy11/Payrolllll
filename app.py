@@ -2,9 +2,11 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.ensemble import IsolationForest
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 from datetime import datetime
 import zipfile
 import io
@@ -69,7 +71,6 @@ st.markdown("""
 # ============================================================
 # TOP HEADER: TINY EFCC AT EXTREME TOP RIGHT, COAT OF ARMS & IBS LOGO BALANCED LEFT/RIGHT
 # ============================================================
-# 1. Tiny EFCC Logo at Extreme Top Right
 col_top_spacer, col_tiny_efcc = st.columns([19, 1])
 with col_tiny_efcc:
     st.markdown("<div style='text-align: right;'>", unsafe_allow_html=True)
@@ -83,7 +84,6 @@ with col_tiny_efcc:
 
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
-# 2. Coat of Arms (Left) and IBS School Logo (Right) on the Same Line, Matched Size
 col_arm, col_title, col_school = st.columns([1, 4, 1])
 
 with col_arm:
@@ -237,27 +237,31 @@ elif st.session_state.step == 2:
         
     elif "Generate" in data_choice:
         np.random.seed(42)
-        num_emp = 200
+        num_emp = 500  # expanded sample count for rich graph distributions
         df = pd.DataFrame({
-            "EmployeeID": [f"EMP{i:03d}" for i in range(1, num_emp + 1)],
-            "Name": [f"Employee_{i:03d}" for i in range(1, num_emp + 1)],
-            "State": np.random.choice(["Kogi", "Kwara", "Ekiti"], num_emp),
-            "LGA": np.random.choice(["Okene", "Kabba", "Lokoja", "Ado"], num_emp),
-            "BasicSalary": np.maximum(np.random.normal(80000, 12000, num_emp), 30000).round(2),
-            "Allowances": np.maximum(np.random.normal(15000, 4000, num_emp), 0).round(2),
-            "Deductions": np.maximum(np.random.normal(5000, 1500, num_emp), 0).round(2)
+            "employeeid": [f"EMP{i:03d}" for i in range(1, num_emp + 1)],
+            "name": [f"Employee_{i:03d}" for i in range(1, num_emp + 1)],
+            "state": np.random.choice(["Kogi State", "Kwara State", "Ekiti State"], num_emp),
+            "lga": np.random.choice(["Okene", "Kabba", "Lokoja", "Ado-Ekiti", "Ijumu", "Yagba East"], num_emp),
+            "basicsalary": np.maximum(np.random.normal(85000, 15000, num_emp), 30000).round(2),
+            "allowances": np.maximum(np.random.normal(18000, 5000, num_emp), 0).round(2),
+            "deductions": np.maximum(np.random.normal(6000, 1800, num_emp), 0).round(2)
         })
-        df["NetSalary"] = (df["BasicSalary"] + df["Allowances"] - df["Deductions"]).round(2)
-        df.loc[10, "BasicSalary"] = 350000.00
-        df.loc[10, "NetSalary"] = df.loc[10, "BasicSalary"] + df.loc[10, "Allowances"] - df.loc[10, "Deductions"]
-        df.loc[25, "Allowances"] = 200000.00
-        df.loc[25, "NetSalary"] = df.loc[25, "BasicSalary"] + df.loc[25, "Allowances"] - df.loc[25, "Deductions"]
+        df["netsalary"] = (df["basicsalary"] + df["allowances"] - df["deductions"]).round(2)
+        # Inject deliberate anomalies
+        df.loc[10, "basicsalary"] = 450000.00
+        df.loc[10, "netsalary"] = df.loc[10, "basicsalary"] + df.loc[10, "allowances"] - df.loc[10, "deductions"]
+        df.loc[25, "allowances"] = 300000.00
+        df.loc[25, "netsalary"] = df.loc[25, "basicsalary"] + df.loc[25, "allowances"] - df.loc[25, "deductions"]
+        df.loc[50, "deductions"] = 0.00
         st.success("Sample Nigerian payroll dataset generated with test anomalies.")
         
     elif "Upload" in data_choice:
         uploaded_file = st.file_uploader("Upload Payroll CSV file", type=["csv"])
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
+            # Normalize columns to lowercase to prevent matching errors
+            df.columns = [c.lower().strip() for c in df.columns]
             st.success("Successfully loaded uploaded CSV file.")
         else:
             if "df" in st.session_state:
@@ -302,7 +306,7 @@ elif st.session_state.step == 3:
         st.stop()
         
     df = st.session_state.df
-    contamination_rate = st.slider("Expected Anomaly Sensitivity Rate (%):", 1, 20, 5) / 100.0
+    contamination_rate = st.slider("Expected Anomaly Sensitivity Rate (%):", 1, 20, 7) / 100.0
     
     numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
     ignore_words = ["id", "employeeid", "staffid", "recordnumber", "bank_account"]
@@ -323,11 +327,19 @@ elif st.session_state.step == 3:
         
         all_preds = model.predict(scaler.transform(X))
         results = df.copy()
-        results["AnomalyStatus"] = np.where(all_preds == -1, "Flagged for Review", "No Anomaly Flag")
-        results["AnomalyScore"] = model.decision_function(scaler.transform(X))
+        results["anomalystatus"] = np.where(all_preds == -1, "Flagged for Review", "No Anomaly Flag")
+        results["flagged"] = all_preds == -1
+        results["anomalyscore"] = model.decision_function(scaler.transform(X))
+        
+        # Compute PCA 2D Projection for specialized charting
+        pca = PCA(n_components=2, random_state=42)
+        scaled_full = scaler.transform(X)
+        pcs = pca.fit_transform(scaled_full)
+        results["pc1"] = pcs[:, 0]
+        results["pc2"] = pcs[:, 1]
         
         st.session_state.results = results
-        st.session_state.flagged_records = results[results["AnomalyStatus"] == "Flagged for Review"].copy()
+        st.session_state.flagged_records = results[results["flagged"]].copy()
         
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("Analyzed", len(results))
@@ -350,7 +362,64 @@ elif st.session_state.step == 3:
             st.rerun()
 
 # ============================================================
-# PAGE 4: VISUALIZATIONS & REPORTS
+# CHART FUNCTIONS INTEGRATION
+# ============================================================
+def chart_pca(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    n = d[~d["flagged"]]
+    f = d[d["flagged"]]
+    ax.scatter(n["pc1"], n["pc2"], s=12, c="#008751", label="Normal", alpha=0.7)
+    ax.scatter(f["pc1"], f["pc2"], s=35, c="#d32f2f", marker="x", label="Flagged")
+    ax.set_title("Payroll Records (PCA View)", fontweight='bold', fontsize=10)
+    ax.set_xlabel("Principal Component 1", fontsize=9)
+    ax.set_ylabel("Principal Component 2", fontsize=9)
+    ax.legend(fontsize=8)
+    return fig
+
+def chart_lga(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    if "lga" in d.columns:
+        c = d[d["flagged"]]["lga"].value_counts()
+        if not c.empty:
+            sns.barplot(x=c.values, y=c.index, color="#1b5e20", ax=ax)
+            ax.set_title("Flagged Staff per Local Government", fontweight='bold', fontsize=10)
+            ax.set_xlabel("Flagged Count", fontsize=9)
+            ax.set_ylabel("LGA", fontsize=9)
+        else:
+            ax.text(0.5, 0.5, "No LGA Flagged Records", ha='center', va='center')
+            ax.set_title("Flagged Staff per Local Government", fontweight='bold', fontsize=10)
+    else:
+        ax.text(0.5, 0.5, "LGA Column Missing", ha='center', va='center')
+    return fig
+
+def chart_salary_dist(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    if "netsalary" in d.columns:
+        ax.hist(d["netsalary"], bins=15, color="#008751", edgecolor="white", alpha=0.85)
+        ax.set_title("Net Salary Distribution Frequency", fontweight='bold', fontsize=10)
+        ax.set_xlabel("Net Salary (₦)", fontsize=9)
+        ax.set_ylabel("Employee Count", fontsize=9)
+    else:
+        ax.text(0.5, 0.5, "NetSalary Column Missing", ha='center', va='center')
+    return fig
+
+def chart_allowance_scatter(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    if "allowances" in d.columns and "netsalary" in d.columns:
+        n = d[~d["flagged"]]
+        f = d[d["flagged"]]
+        ax.scatter(n["allowances"], n["netsalary"], color="#008751", label="Normal", alpha=0.6, s=25)
+        ax.scatter(f["allowances"], f["netsalary"], color="#d32f2f", label="Flagged", marker="X", s=70)
+        ax.set_title("Allowances vs Net Salary Outlier Mapping", fontweight='bold', fontsize=10)
+        ax.set_xlabel("Allowances (₦)", fontsize=9)
+        ax.set_ylabel("Net Salary (₦)", fontsize=9)
+        ax.legend(fontsize=8)
+    else:
+        ax.text(0.5, 0.5, "Required Financial Columns Missing", ha='center', va='center')
+    return fig
+
+# ============================================================
+# PAGE 4: VISUALIZATIONS & REPORTS (EXPANDED GRAPH SUITE)
 # ============================================================
 elif st.session_state.step == 4:
     if not st.session_state.auth_verified:
@@ -360,7 +429,7 @@ elif st.session_state.step == 4:
             st.rerun()
         st.stop()
 
-    st.header("📊 Payroll Analytics & Report Export")
+    st.header("📊 Advanced Payroll Analytics & Forensic Graphs")
     
     if "results" not in st.session_state:
         st.warning("⚠️ Please run AI Model Analysis on Step 3 first.")
@@ -368,47 +437,21 @@ elif st.session_state.step == 4:
         results = st.session_state.results
         flagged_records = st.session_state.flagged_records
         
-        col_v1, col_v2, col_v3 = st.columns(3)
-        
+        st.subheader("1. Dimensional Reduction & Regional Risk Analysis")
+        col_v1, col_v2 = st.columns(2)
         with col_v1:
-            fig1, ax1 = plt.subplots(figsize=(5, 4))
-            counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
-            bars = ax1.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
-            for bar in bars:
-                h = bar.get_height()
-                ax1.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
-            ax1.set_title("Anomaly Status Count", fontweight='bold', fontsize=10)
-            ax1.tick_params(axis='x', rotation=15)
-            st.pyplot(fig1)
-            
+            st.pyplot(chart_pca(results))
         with col_v2:
-            fig2, ax2 = plt.subplots(figsize=(5, 4))
-            pie_counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
-            colors = ["#008751", "#d32f2f"]
-            ax2.pie(
-                pie_counts.values, 
-                labels=pie_counts.index, 
-                colors=colors, 
-                autopct='%1.1f%%', 
-                startangle=90,
-                textprops={'fontsize': 8}
-            )
-            ax2.set_title("Anomaly Percentage Share", fontweight='bold', fontsize=10)
-            st.pyplot(fig2)
+            st.pyplot(chart_lga(results))
 
+        st.divider()
+
+        st.subheader("2. Distributional Depth & Financial Correlation Analysis")
+        col_v3, col_v4 = st.columns(2)
         with col_v3:
-            fig3, ax3 = plt.subplots(figsize=(5, 4))
-            if "State" in results.columns and "BasicSalary" in results.columns:
-                state_avg = results.groupby("State")["BasicSalary"].mean()
-                bars3 = ax3.bar(state_avg.index, state_avg.values, color="#1b5e20")
-                for bar in bars3:
-                    h = bar.get_height()
-                    ax3.text(bar.get_x() + bar.get_width()/2., h, f'{int(h):,}', ha='center', va='bottom', fontsize=8)
-                ax3.set_title("Avg Basic Salary by State", fontweight='bold', fontsize=10)
-            else:
-                ax3.text(0.5, 0.5, "No State Data Available", ha='center', va='center')
-                ax3.set_title("State Distribution", fontweight='bold', fontsize=10)
-            st.pyplot(fig3)
+            st.pyplot(chart_salary_dist(results))
+        with col_v4:
+            st.pyplot(chart_allowance_scatter(results))
             
         st.divider()
         st.subheader("📦 Download Audit Package")
