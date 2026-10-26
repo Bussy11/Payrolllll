@@ -92,38 +92,7 @@ with col_center:
             <p class="top-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
         </div>
     """, unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    
- # ============================================================
-# TOP HEADER: PERFECTLY CENTERED INSTITUTIONAL LAYOUT
-# ============================================================
-st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
-
-# 1. School Logo & Title (Centered)
-_, col_center, _ = st.columns([1, 3, 1])
-
-with col_center:
-    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    
-    logo_found = False
-    for filename in ["school_logo.jpeg", "school_logo.jpg", "school_logo.png", "logo.jpeg", "logo.jpg", "logo.png", "ibs_logo.jpeg"]:
-        if os.path.exists(filename):
-            st.image(filename, width=100)
-            logo_found = True
-            break
-            
-    if not logo_found:
-        st.write("🏫 IBS Logo")
-        
-    st.markdown("""
-        <div class="top-header" style="margin-top: 6px; padding: 10px;">
-            <p class="top-title" style="font-size: 17px; margin: 0;">International Business School</p>
-            <p class="top-sub" style="font-size: 11px; margin: 0;">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
-        </div>
-    """, unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
+    st.markdown("</div>", unsafe_allow_html=True
 # 2. Government Logos Below (Cleanly spaced side-by-side)
 st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
 _, col_arm, col_space, col_efcc, _ = st.columns([2, 1, 0.5, 1, 2])
