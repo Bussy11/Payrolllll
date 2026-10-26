@@ -65,33 +65,42 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
-# TOP HEADER WITH .JPEG SUPPORT
+# TOP HEADER WITH TRIPLE LOGO SUPPORT (SCHOOL, COAT OF ARMS, EFCC)
 # ============================================================
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
-col_logo1, col_title, col_logo2 = st.columns([1, 4, 1])
+# 4 columns to balance the 3 logos and the center title text
+col_logo1, col_logo2, col_title, col_logo3 = st.columns([1, 1, 4, 1])
 
 with col_logo1:
+    if os.path.exists("school_logo.jpeg"):
+        st.image("school_logo.jpeg", width=65)
+    elif os.path.exists("school_logo.jpg"):
+        st.image("school_logo.jpg", width=65)
+    else:
+        st.write("🏫 IBS Logo")
+
+with col_logo2:
     if os.path.exists("coat_of_arms.jpeg"):
-        st.image("coat_of_arms.jpeg", width=75)
+        st.image("coat_of_arms.jpeg", width=65)
     elif os.path.exists("coat_of_arms.jpg"):
-        st.image("coat_of_arms.jpg", width=75)
+        st.image("coat_of_arms.jpg", width=65)
     else:
         st.write("🇳🇬 Coat of Arms")
 
 with col_title:
     st.markdown("""
-        <div class="top-header">
-            <p class="top-title">Federal Republic of Nigeria</p>
-            <p class="top-sub">AI Payroll Anomaly Detection SYSTEM</p>
+        <div class="top-header" style="padding: 10px;">
+            <p class="top-title" style="font-size: 18px;">International Business School</p>
+            <p class="top-sub" style="font-size: 11px;">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
         </div>
     """, unsafe_allow_html=True)
 
-with col_logo2:
+with col_logo3:
     if os.path.exists("efcc_logo.jpeg"):
-        st.image("efcc_logo.jpeg", width=75)
+        st.image("efcc_logo.jpeg", width=65)
     elif os.path.exists("efcc_logo.jpg"):
-        st.image("efcc_logo.jpg", width=75)
+        st.image("efcc_logo.jpg", width=65)
     else:
         st.write("🦅 EFCC Logo")
 
