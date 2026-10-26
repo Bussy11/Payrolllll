@@ -692,13 +692,13 @@ if st.session_state.step == 6:
             "image": "developer 11.jpeg"
         },
         {
-            "name": "Team Member 12",
-            "address": "Address 12",
-            "state": "State 12",
-            "education": "Education 12",
-            "role": "Role 12",
-            "marital_status": "Single",
-            "image": "developer12.jpeg"
+            "name": "OLUWATOSIN MOSES O",
+            "address": "ODO-ERE, YAGBA WEST",
+            "state": "KOGI STATE",
+            "education": "B.Sc., (Sociology)",
+            "role": "AI TEAM",
+            "marital_status": "MARRIED",
+            "image": "developer 12.jpeg"
         }
     ]
 
