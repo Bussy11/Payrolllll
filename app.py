@@ -223,7 +223,7 @@ elif st.session_state.step == 2:
     
     data_choice = st.radio(
         "Select Dataset Source:",
-        ["— Please Select —", "Generate Sample Payroll Dataset (200 Records)", "Upload External Payroll CSV File"],
+        ["— Please Select —", "Generate Sample Payroll Dataset (500 Records)", "Upload External Payroll CSV File"],
         horizontal=True,
         index=0,
         key="dataset_radio_choice"
@@ -237,7 +237,7 @@ elif st.session_state.step == 2:
         
     elif "Generate" in data_choice:
         np.random.seed(42)
-        num_emp = 500  # expanded sample count for rich graph distributions
+        num_emp = 500
         df = pd.DataFrame({
             "employeeid": [f"EMP{i:03d}" for i in range(1, num_emp + 1)],
             "name": [f"Employee_{i:03d}" for i in range(1, num_emp + 1)],
@@ -248,7 +248,6 @@ elif st.session_state.step == 2:
             "deductions": np.maximum(np.random.normal(6000, 1800, num_emp), 0).round(2)
         })
         df["netsalary"] = (df["basicsalary"] + df["allowances"] - df["deductions"]).round(2)
-        # Inject deliberate anomalies
         df.loc[10, "basicsalary"] = 450000.00
         df.loc[10, "netsalary"] = df.loc[10, "basicsalary"] + df.loc[10, "allowances"] - df.loc[10, "deductions"]
         df.loc[25, "allowances"] = 300000.00
@@ -260,7 +259,6 @@ elif st.session_state.step == 2:
         uploaded_file = st.file_uploader("Upload Payroll CSV file", type=["csv"])
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
-            # Normalize columns to lowercase to prevent matching errors
             df.columns = [c.lower().strip() for c in df.columns]
             st.success("Successfully loaded uploaded CSV file.")
         else:
@@ -331,7 +329,7 @@ elif st.session_state.step == 3:
         results["flagged"] = all_preds == -1
         results["anomalyscore"] = model.decision_function(scaler.transform(X))
         
-        # Compute PCA 2D Projection for specialized charting
+        # Compute PCA components for advanced charting
         pca = PCA(n_components=2, random_state=42)
         scaled_full = scaler.transform(X)
         pcs = pca.fit_transform(scaled_full)
