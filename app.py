@@ -61,25 +61,22 @@ st.markdown("""
         color: white !important;
         font-weight: bold !important;
     }
-    </style>
-""", unsafe_allow_html=True)
-
-# ============================================================
-# TOP HEADER: CENTERED SCHOOL LOGO & TITLE, WITH COAT OF ARMS & EFCC BELOW
+    
+ # ============================================================
+# TOP HEADER: PERFECTLY CENTERED INSTITUTIONAL LAYOUT
 # ============================================================
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
-# 1. Main Center Block for School Logo and Title
+# 1. School Logo & Title (Centered)
 _, col_center, _ = st.columns([1, 3, 1])
 
 with col_center:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     
-    # Display School Logo (Centered & Prominent)
     logo_found = False
     for filename in ["school_logo.jpeg", "school_logo.jpg", "school_logo.png", "logo.jpeg", "logo.jpg", "logo.png", "ibs_logo.jpeg"]:
         if os.path.exists(filename):
-            st.image(filename, width=110)
+            st.image(filename, width=100)
             logo_found = True
             break
             
@@ -87,38 +84,39 @@ with col_center:
         st.write("🏫 IBS Logo")
         
     st.markdown("""
-        <div class="top-header" style="margin-top: 8px; padding: 10px;">
-            <p class="top-title" style="font-size: 18px; margin: 0;">International Business School</p>
+        <div class="top-header" style="margin-top: 6px; padding: 10px;">
+            <p class="top-title" style="font-size: 17px; margin: 0;">International Business School</p>
             <p class="top-sub" style="font-size: 11px; margin: 0;">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
         </div>
     """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# 2. Second Line Below: Coat of Arms and EFCC Logo Side-by-Side
-st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
-_, col_arm, col_efcc, _ = st.columns([2, 1, 1, 2])
+# 2. Government Logos Below (Cleanly spaced side-by-side)
+st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
+_, col_arm, col_space, col_efcc, _ = st.columns([2, 1, 0.5, 1, 2])
 
 with col_arm:
-    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align: right;'>", unsafe_allow_html=True)
     if os.path.exists("coat_of_arms.jpeg"):
-        st.image("coat_of_arms.jpeg", width=45)
+        st.image("coat_of_arms.jpeg", width=50)
     elif os.path.exists("coat_of_arms.jpg"):
-        st.image("coat_of_arms.jpg", width=45)
+        st.image("coat_of_arms.jpg", width=50)
     else:
-        st.write("🇳🇬 Coat of Arms")
+        st.write("🇳🇬")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col_efcc:
-    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align: left;'>", unsafe_allow_html=True)
     if os.path.exists("efcc_logo.jpeg"):
-        st.image("efcc_logo.jpeg", width=45)
+        st.image("efcc_logo.jpeg", width=50)
     elif os.path.exists("efcc_logo.jpg"):
-        st.image("efcc_logo.jpg", width=45)
+        st.image("efcc_logo.jpg", width=50)
     else:
-        st.write("🦅 EFCC Logo")
+        st.write("🦅")
     st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown('<div class="nigeria-banner" style="margin-top: 12px;"></div>', unsafe_allow_html=True)
+st.markdown('<div class="nigeria-banner" style="margin-top: 10px;"></div>', unsafe_allow_html=True)
+
  #============================================================
 # INITIALIZE SESSION STATES (STEP 2 SET AS DEFAULT)
 # ============================================================
