@@ -126,7 +126,7 @@ if "auth_verified" not in st.session_state:
     st.session_state.auth_verified = True
     st.session_state.full_name = " "
     st.session_state.address = " "
-    st.session_state.contact= " "
+    st.session_state.contact = " "
 
 if "step" not in st.session_state:
     st.session_state.step = 2
@@ -329,7 +329,6 @@ elif st.session_state.step == 3:
         results["flagged"] = all_preds == -1
         results["anomalyscore"] = model.decision_function(scaler.transform(X))
         
-        # Compute PCA components for advanced charting
         pca = PCA(n_components=2, random_state=42)
         scaled_full = scaler.transform(X)
         pcs = pca.fit_transform(scaled_full)
@@ -360,7 +359,7 @@ elif st.session_state.step == 3:
             st.rerun()
 
 # ============================================================
-# CHART FUNCTIONS INTEGRATION
+# CHART FUNCTIONS DEFINITION
 # ============================================================
 def chart_pca(d):
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -419,7 +418,7 @@ def chart_allowance_scatter(d):
 # ============================================================
 # PAGE 4: VISUALIZATIONS & REPORTS (EXPANDED GRAPH SUITE)
 # ============================================================
-elif st.session_state.step == 4:
+if st.session_state.step == 4:
     if not st.session_state.auth_verified:
         st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
         if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step4"):
