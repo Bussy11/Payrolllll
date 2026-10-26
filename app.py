@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.ensemble import IsolationForest
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -359,7 +358,7 @@ elif st.session_state.step == 3:
             st.rerun()
 
 # ============================================================
-# CHART FUNCTIONS DEFINITION
+# CHART FUNCTIONS DEFINITION (Matplotlib Only)
 # ============================================================
 def chart_pca(d):
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -378,7 +377,7 @@ def chart_lga(d):
     if "lga" in d.columns:
         c = d[d["flagged"]]["lga"].value_counts()
         if not c.empty:
-            sns.barplot(x=c.values, y=c.index, color="#1b5e20", ax=ax)
+            ax.barh(c.index, c.values, color="#1b5e20")
             ax.set_title("Flagged Staff per Local Government", fontweight='bold', fontsize=10)
             ax.set_xlabel("Flagged Count", fontsize=9)
             ax.set_ylabel("LGA", fontsize=9)
