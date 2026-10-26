@@ -590,7 +590,7 @@ elif st.session_state.step == 6:
             "address": "ODO-ERE, YAGBA WEST LG",
             "state": "KOGI STATE",
             "education": "B. Sc",
-            "role": "DATA COLLECTION TEAM",
+            "role": "AI TEAM",
             "marital_status": "MARRIED",
             "image": "developer 2.jpeg"
         },
@@ -682,7 +682,7 @@ elif st.session_state.step == 6:
             "education": "B. Sc in (Sociology)",
             "role": "AI TEAM",
             "marital_status": "MARRIED",
-            "image": "developer12.jpeg"
+            "image": "developer 12.jpeg"
         }
     ]
 
