@@ -35,7 +35,6 @@ st.markdown(
             unsafe_allow_html=True
         )
 
-    }
     .nigeria-banner {
         background: linear-gradient(90deg, #008751 0%, #008751 33%, #ffffff 33%, #ffffff 66%, #008751 66%, #008751 100%);
         height: 10px;
