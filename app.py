@@ -23,20 +23,13 @@ st.set_page_config(
 )
 
 # Custom Styling
-st.markdown(
-            f"""
-            <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #008751; margin-top: 15px;">
-                <h4 style="color: #008751; margin: 0 0 5px 0;">Official Session Active</h4>
-                <p style="margin: 0; color: #1b5e20; font-weight: 600;">
-                    Welcome, <b>{st.session_state.full_name}</b>. Your credentials have been logged for this forensic session.
-                </p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-.nigeria-banner {
-        background: linear-gradient(90deg, #008751 0%, #008751 33%, #ffffff 33%, #ffffff 66%, #008751 66%, #008751 100%);
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: #f7f9f8;
+    }
+    .nigeria-banner {
+        background-color: #008751;
         height: 10px;
         border-radius: 4px;
         margin-bottom: 15px;
@@ -68,7 +61,9 @@ st.markdown(
         color: white !important;
         font-weight: bold !important;
     }
-        
+    </style>
+""", unsafe_allow_html=True)
+
 # ============================================================
 # TOP HEADER: PROMINENT CENTERED SCHOOL LOGO & SIDE LOGOS
 # ============================================================
