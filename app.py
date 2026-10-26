@@ -17,7 +17,7 @@ warnings.filterwarnings("ignore")
 # PAGE CONFIGURATION
 # ============================================================
 st.set_page_config(
-    page_title="Federal Republic of Nigeria - AI Payroll Forensic Portal",
+    page_title="Federal Republic of Nigeria & IBS - Forensic Audit Portal",
     page_icon="🇳🇬",
     layout="wide"
 )
@@ -36,6 +36,34 @@ st.markdown("""
     }
     .top-header {
         background-color: #ffffff;
+        padding: 15px;
+        border-radius: 12px;
+        border: 2px solid #008751;
+        box-shadow: 0px 4px 15px rgba(0, 135, 81, 0.15);
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    .top-title {
+        color: #008751;
+        font-weight: 900;
+        font-size: 22px;
+        text-transform: uppercase;
+        margin: 5px 0 2px 0;
+    }
+    .top-sub {
+        color: #1b5e20;
+        font-size: 13px;
+        font-weight: 700;
+        margin: 0;
+    }
+    .stButton>button {
+        background-color: #008751 !important;
+        color: white !important;
+        font-weight: bold !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
         padding: 15px;
         border-radius: 12px;
         border: 2px solid #008751;
