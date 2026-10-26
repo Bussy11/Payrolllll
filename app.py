@@ -388,6 +388,32 @@ def chart_lga(d):
         ax.text(0.5, 0.5, "LGA Column Missing", ha='center', va='center')
     return fig
 
+def chart_status_bar(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    counts = d["anomalystatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
+    bars = ax.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
+    for bar in bars:
+        h = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
+    ax.set_title("Anomaly Status Count (Bar Chart)", fontweight='bold', fontsize=10)
+    ax.tick_params(axis='x', rotation=10)
+    return fig
+
+def chart_status_pie(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    pie_counts = d["anomalystatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
+    colors = ["#008751", "#d32f2f"]
+    ax.pie(
+        pie_counts.values, 
+        labels=pie_counts.index, 
+        colors=colors, 
+        autopct='%1.1f%%', 
+        startangle=90,
+        textprops={'fontsize': 8}
+    )
+    ax.set_title("Anomaly Share (%) (Pie Chart)", fontweight='bold', fontsize=10)
+    return fig
+
 def chart_salary_dist(d):
     fig, ax = plt.subplots(figsize=(6, 4))
     if "netsalary" in d.columns:
@@ -415,7 +441,7 @@ def chart_allowance_scatter(d):
     return fig
 
 # ============================================================
-# PAGE 4: VISUALIZATIONS & REPORTS (EXPANDED GRAPH SUITE)
+# PAGE 4: VISUALIZATIONS & REPORTS (COMPREHENSIVE GRAPH SUITE)
 # ============================================================
 if st.session_state.step == 4:
     if not st.session_state.auth_verified:
@@ -442,11 +468,20 @@ if st.session_state.step == 4:
 
         st.divider()
 
-        st.subheader("2. Distributional Depth & Financial Correlation Analysis")
+        st.subheader("2. Anomaly Counts & Proportion Share")
         col_v3, col_v4 = st.columns(2)
         with col_v3:
-            st.pyplot(chart_salary_dist(results))
+            st.pyplot(chart_status_bar(results))
         with col_v4:
+            st.pyplot(chart_status_pie(results))
+
+        st.divider()
+
+        st.subheader("3. Distributional Depth & Financial Correlation Analysis")
+        col_v5, col_v6 = st.columns(2)
+        with col_v5:
+            st.pyplot(chart_salary_dist(results))
+        with col_v6:
             st.pyplot(chart_allowance_scatter(results))
             
         st.divider()
