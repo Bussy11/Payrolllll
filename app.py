@@ -21,7 +21,10 @@ st.set_page_config(
     page_icon="🇳🇬",
     layout="wide"
 )
-# Custom Styling
+
+# ============================================================
+# CUSTOM STYLING (Clean & Error-Free)
+# ============================================================
 st.markdown("""
 <style>
 .stApp {
@@ -45,13 +48,13 @@ st.markdown("""
 .top-title {
     color: #008751;
     font-weight: 900;
-    font-size: 22px;
+    font-size: 20px;
     text-transform: uppercase;
     margin: 5px 0 2px 0;
 }
 .top-sub {
     color: #1b5e20;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     margin: 0;
 }
@@ -61,66 +64,63 @@ st.markdown("""
     font-weight: bold !important;
 }
 </style>
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 # ============================================================
-# TOP HEADER: CENTERED SCHOOL LOGO & TITLE, WITH COAT OF ARMS & EFCC BELOW
+# TOP HEADER: TINY EFCC AT EXTREME TOP RIGHT, COAT OF ARMS & IBS LOGO BALANCED LEFT/RIGHT
 # ============================================================
+# 1. Tiny EFCC Logo at Extreme Top Right
+col_top_spacer, col_tiny_efcc = st.columns([19, 1])
+with col_tiny_efcc:
+    st.markdown("<div style='text-align: right;'>", unsafe_allow_html=True)
+    if os.path.exists("efcc_logo.jpeg"):
+        st.image("efcc_logo.jpeg", width=25)
+    elif os.path.exists("efcc_logo.jpg"):
+        st.image("efcc_logo.jpg", width=25)
+    else:
+        st.write("🦅")
+    st.markdown("</div>", unsafe_allow_html=True)
+
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
-_, col_center, _ = st.columns([1, 3, 1])
+# 2. Coat of Arms (Left) and IBS School Logo (Right) on the Same Line, Matched Size
+col_arm, col_title, col_school = st.columns([1, 4, 1])
 
-with col_center:
-    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    
+with col_arm:
+    st.markdown("<div style='text-align: left;'>", unsafe_allow_html=True)
+    if os.path.exists("coat_of_arms.jpeg"):
+        st.image("coat_of_arms.jpeg", width=80)
+    elif os.path.exists("coat_of_arms.jpg"):
+        st.image("coat_of_arms.jpg", width=80)
+    else:
+        st.write("🇳🇬 Coat of Arms")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col_title:
+    st.markdown("""
+        <div class="top-header" style="margin-top: 5px; padding: 10px;">
+            <p class="top-title">International Business School</p>
+            <p class="top-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col_school:
+    st.markdown("<div style='text-align: right;'>", unsafe_allow_html=True)
     logo_found = False
     for filename in ["school_logo.jpeg", "school_logo.jpg", "school_logo.png", "logo.jpeg", "logo.jpg", "logo.png"]:
         if os.path.exists(filename):
-            st.image(filename, width=100)
+            st.image(filename, width=80)
             logo_found = True
             break
             
     if not logo_found:
         st.write("🏫 IBS Logo")
-        
-    st.markdown("""
-        <div class="top-header" style="margin-top: 6px; padding: 10px;">
-            <p class="top-title">International Business School</p>
-            <p class="top-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
-        </div>
-    """, unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True
-# 2. Government Logos Below (Cleanly spaced side-by-side)
-st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
-_, col_arm, col_space, col_efcc, _ = st.columns([2, 1, 0.5, 1, 2])
-
-with col_arm:
-    st.markdown("<div style='text-align: right;'>", unsafe_allow_html=True)
-    if os.path.exists("coat_of_arms.jpeg"):
-        st.image("coat_of_arms.jpeg", width=50)
-    elif os.path.exists("coat_of_arms.jpg"):
-        st.image("coat_of_arms.jpg", width=50)
-    else:
-        st.write("🇳🇬")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with col_efcc:
-    st.markdown("<div style='text-align: left;'>", unsafe_allow_html=True)
-    if os.path.exists("efcc_logo.jpeg"):
-        st.image("efcc_logo.jpeg", width=50)
-    elif os.path.exists("efcc_logo.jpg"):
-        st.image("efcc_logo.jpg", width=50)
-    else:
-        st.write("🦅")
     st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown('<div class="nigeria-banner" style="margin-top: 10px;"></div>', unsafe_allow_html=True)
 
- #============================================================
-# INITIALIZE SESSION STATES (STEP 2 SET AS DEFAULT)
+# ============================================================
+# INITIALIZE SESSION STATES
 # ============================================================
 if "auth_verified" not in st.session_state:
     st.session_state.auth_verified = True
@@ -152,7 +152,6 @@ for s_num, s_name in step_names.items():
     with nav_cols[s_num - 1]:
         btn_label = f"📍 {s_num}" if st.session_state.step != s_num else f"👉 [{s_num}]"
         if st.button(btn_label, use_container_width=True, key=f"nav_btn_{s_num}"):
-            # Security check: Block jumping past step 1 if not authorized
             if s_num > 1 and not st.session_state.auth_verified:
                 st.warning("⛔ ACCESS LOCKED: Please complete and confirm valid authorization on Step 1 first.")
             else:
@@ -193,12 +192,11 @@ if st.session_state.step == 1:
         st.session_state.address = st.text_input("Official Address:", value=st.session_state.address)
         st.session_state.contact = st.text_input("Contact Number:", value=st.session_state.contact)
 
-    # This condition displays the banner immediately when the name box has text and authorization is verified
     if st.session_state.auth_verified and st.session_state.full_name.strip() != "":
         st.markdown(
             f"""
             <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #008751; margin-top: 15px;">
-                <h4 style="color: #008751; margin: 0 0 5px 0;">🏛️ Official Session Active</h4>
+                <h4 style="color: #008751; margin: 0 0 5px 0;">Official Session Active</h4>
                 <p style="margin: 0; color: #1b5e20; font-weight: 600;">
                     Welcome, <b>{st.session_state.full_name}</b>. Your credentials have been logged for this forensic session.
                 </p>
@@ -233,7 +231,6 @@ elif st.session_state.step == 2:
     
     df = None
     if data_choice == "— Please Select —":
-        # Clear existing dataframe in session state so user cannot proceed without selecting
         if "df" in st.session_state:
             del st.session_state.df
         st.info("ℹ️ Please select a dataset source above to proceed.")
@@ -378,8 +375,8 @@ elif st.session_state.step == 4:
             counts = results["AnomalyStatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
             bars = ax1.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
             for bar in bars:
-             h = bar.get_height()
-            ax1.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
+                h = bar.get_height()
+                ax1.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
             ax1.set_title("Anomaly Status Count", fontweight='bold', fontsize=10)
             ax1.tick_params(axis='x', rotation=15)
             st.pyplot(fig1)
@@ -504,7 +501,6 @@ elif st.session_state.step == 6:
     st.header("👥 Meet the Development Team (12 Members)")
     st.markdown("Browse through the team members who built this forensic audit platform.")
 
-    # Developer Profiles List (12 Members)
     developers = [
         {
             "name": "A. O. Juwon",
@@ -616,7 +612,6 @@ elif st.session_state.step == 6:
         }
     ]
 
-    # Navigation buttons (Previous and Next)
     col_prev, col_mid, col_next = st.columns([1, 2, 1])
 
     with col_prev:
