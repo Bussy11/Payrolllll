@@ -68,6 +68,89 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
+# CHART FUNCTIONS DEFINITION (Placed at Top)
+# ============================================================
+def chart_pca(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    n = d[~d["flagged"]]
+    f = d[d["flagged"]]
+    ax.scatter(n["pc1"], n["pc2"], s=12, c="#008751", label="Normal", alpha=0.7)
+    ax.scatter(f["pc1"], f["pc2"], s=35, c="#d32f2f", marker="x", label="Flagged")
+    ax.set_title("Payroll Records (PCA View)", fontweight='bold', fontsize=10)
+    ax.set_xlabel("Principal Component 1", fontsize=9)
+    ax.set_ylabel("Principal Component 2", fontsize=9)
+    ax.legend(fontsize=8)
+    return fig
+
+def chart_lga(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    if "lga" in d.columns:
+        c = d[d["flagged"]]["lga"].value_counts()
+        if not c.empty:
+            ax.barh(c.index, c.values, color="#1b5e20")
+            ax.set_title("Flagged Staff per Local Government", fontweight='bold', fontsize=10)
+            ax.set_xlabel("Flagged Count", fontsize=9)
+            ax.set_ylabel("LGA", fontsize=9)
+        else:
+            ax.text(0.5, 0.5, "No LGA Flagged Records", ha='center', va='center')
+            ax.set_title("Flagged Staff per Local Government", fontweight='bold', fontsize=10)
+    else:
+        ax.text(0.5, 0.5, "LGA Column Missing", ha='center', va='center')
+    return fig
+
+def chart_status_bar(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    counts = d["anomalystatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
+    bars = ax.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
+    for bar in bars:
+        h = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
+    ax.set_title("Anomaly Status Count (Bar Chart)", fontweight='bold', fontsize=10)
+    ax.tick_params(axis='x', rotation=10)
+    return fig
+
+def chart_status_pie(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    pie_counts = d["anomalystatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
+    colors = ["#008751", "#d32f2f"]
+    ax.pie(
+        pie_counts.values, 
+        labels=pie_counts.index, 
+        colors=colors, 
+        autopct='%1.1f%%', 
+        startangle=90,
+        textprops={'fontsize': 8}
+    )
+    ax.set_title("Anomaly Share (%) (Pie Chart)", fontweight='bold', fontsize=10)
+    return fig
+
+def chart_salary_dist(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    if "netsalary" in d.columns:
+        ax.hist(d["netsalary"], bins=15, color="#008751", edgecolor="white", alpha=0.85)
+        ax.set_title("Net Salary Distribution Frequency", fontweight='bold', fontsize=10)
+        ax.set_xlabel("Net Salary (₦)", fontsize=9)
+        ax.set_ylabel("Employee Count", fontsize=9)
+    else:
+        ax.text(0.5, 0.5, "NetSalary Column Missing", ha='center', va='center')
+    return fig
+
+def chart_allowance_scatter(d):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    if "allowances" in d.columns and "netsalary" in d.columns:
+        n = d[~d["flagged"]]
+        f = d[d["flagged"]]
+        ax.scatter(n["allowances"], n["netsalary"], color="#008751", label="Normal", alpha=0.6, s=25)
+        ax.scatter(f["allowances"], f["netsalary"], color="#d32f2f", label="Flagged", marker="X", s=70)
+        ax.set_title("Allowances vs Net Salary Outlier Mapping", fontweight='bold', fontsize=10)
+        ax.set_xlabel("Allowances (₦)", fontsize=9)
+        ax.set_ylabel("Net Salary (₦)", fontsize=9)
+        ax.legend(fontsize=8)
+    else:
+        ax.text(0.5, 0.5, "Required Financial Columns Missing", ha='center', va='center')
+    return fig
+
+# ============================================================
 # TOP HEADER: TINY EFCC AT EXTREME TOP RIGHT, COAT OF ARMS & IBS LOGO BALANCED LEFT/RIGHT
 # ============================================================
 col_top_spacer, col_tiny_efcc = st.columns([19, 1])
@@ -151,7 +234,6 @@ for s_num, s_name in step_names.items():
     with nav_cols[s_num - 1]:
         btn_label = f"📍 {s_num}" if st.session_state.step != s_num else f"👉 [{s_num}]"
         if st.button(btn_label, use_container_width=True, key=f"nav_btn_{s_num}"):
-            # Stage lock logic: prevent jumping ahead if prerequisites aren't met
             if s_num > 1 and (not st.session_state.auth_verified or not st.session_state.full_name.strip()):
                 st.warning("⛔ ACCESS LOCKED: Please complete and confirm valid authorization on Step 1 first.")
             elif s_num > 2 and "df" not in st.session_state:
@@ -222,7 +304,7 @@ if st.session_state.step == 1:
 # ============================================================
 # PAGE 2: DATA INPUT & CLEANING
 # ============================================================
-elif st.session_state.step == 2:
+if st.session_state.step == 2:
     if not st.session_state.auth_verified or not st.session_state.full_name.strip():
         st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
         if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step2_auth"):
@@ -300,7 +382,7 @@ elif st.session_state.step == 2:
 # ============================================================
 # PAGE 3: AI MODEL ANALYSIS
 # ============================================================
-elif st.session_state.step == 3:
+if st.session_state.step == 3:
     if not st.session_state.auth_verified:
         st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 first.")
         if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step3"):
@@ -372,92 +454,9 @@ elif st.session_state.step == 3:
             st.rerun()
 
 # ============================================================
-# CHART FUNCTIONS DEFINITION (Matplotlib Only)
+# PAGE 4: VISUALIZATIONS & REPORTS
 # ============================================================
-def chart_pca(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
-    n = d[~d["flagged"]]
-    f = d[d["flagged"]]
-    ax.scatter(n["pc1"], n["pc2"], s=12, c="#008751", label="Normal", alpha=0.7)
-    ax.scatter(f["pc1"], f["pc2"], s=35, c="#d32f2f", marker="x", label="Flagged")
-    ax.set_title("Payroll Records (PCA View)", fontweight='bold', fontsize=10)
-    ax.set_xlabel("Principal Component 1", fontsize=9)
-    ax.set_ylabel("Principal Component 2", fontsize=9)
-    ax.legend(fontsize=8)
-    return fig
-
-def chart_lga(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
-    if "lga" in d.columns:
-        c = d[d["flagged"]]["lga"].value_counts()
-        if not c.empty:
-            ax.barh(c.index, c.values, color="#1b5e20")
-            ax.set_title("Flagged Staff per Local Government", fontweight='bold', fontsize=10)
-            ax.set_xlabel("Flagged Count", fontsize=9)
-            ax.set_ylabel("LGA", fontsize=9)
-        else:
-            ax.text(0.5, 0.5, "No LGA Flagged Records", ha='center', va='center')
-            ax.set_title("Flagged Staff per Local Government", fontweight='bold', fontsize=10)
-    else:
-        ax.text(0.5, 0.5, "LGA Column Missing", ha='center', va='center')
-    return fig
-
-def chart_status_bar(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
-    counts = d["anomalystatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
-    bars = ax.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
-    for bar in bars:
-        h = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
-    ax.set_title("Anomaly Status Count (Bar Chart)", fontweight='bold', fontsize=10)
-    ax.tick_params(axis='x', rotation=10)
-    return fig
-
-def chart_status_pie(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
-    pie_counts = d["anomalystatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
-    colors = ["#008751", "#d32f2f"]
-    ax.pie(
-        pie_counts.values, 
-        labels=pie_counts.index, 
-        colors=colors, 
-        autopct='%1.1f%%', 
-        startangle=90,
-        textprops={'fontsize': 8}
-    )
-    ax.set_title("Anomaly Share (%) (Pie Chart)", fontweight='bold', fontsize=10)
-    return fig
-
-def chart_salary_dist(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
-    if "netsalary" in d.columns:
-        ax.hist(d["netsalary"], bins=15, color="#008751", edgecolor="white", alpha=0.85)
-        ax.set_title("Net Salary Distribution Frequency", fontweight='bold', fontsize=10)
-        ax.set_xlabel("Net Salary (₦)", fontsize=9)
-        ax.set_ylabel("Employee Count", fontsize=9)
-    else:
-        ax.text(0.5, 0.5, "NetSalary Column Missing", ha='center', va='center')
-    return fig
-
-def chart_allowance_scatter(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
-    if "allowances" in d.columns and "netsalary" in d.columns:
-        n = d[~d["flagged"]]
-        f = d[d["flagged"]]
-        ax.scatter(n["allowances"], n["netsalary"], color="#008751", label="Normal", alpha=0.6, s=25)
-        ax.scatter(f["allowances"], f["netsalary"], color="#d32f2f", label="Flagged", marker="X", s=70)
-        ax.set_title("Allowances vs Net Salary Outlier Mapping", fontweight='bold', fontsize=10)
-        ax.set_xlabel("Allowances (₦)", fontsize=9)
-        ax.set_ylabel("Net Salary (₦)", fontsize=9)
-        ax.legend(fontsize=8)
-    else:
-        ax.text(0.5, 0.5, "Required Financial Columns Missing", ha='center', va='center')
-    return fig
-
-# ============================================================
-# PAGE 4: VISUALIZATIONS & REPORTS (COMPREHENSIVE GRAPH SUITE)
-# ============================================================
-elif st.session_state.step == 4:
+if st.session_state.step == 4:
     if not st.session_state.auth_verified:
         st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 first.")
         if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step4_auth"):
@@ -536,7 +535,7 @@ elif st.session_state.step == 4:
 # ============================================================
 # PAGE 5: Q&A ASSISTANT & KUDOS
 # ============================================================
-elif st.session_state.step == 5:
+if st.session_state.step == 5:
     if not st.session_state.auth_verified or "results" not in st.session_state:
         st.error("⛔ ACCESS LOCKED: Please complete previous mandatory steps first.")
         if st.button("⬅️ Go Back to Step 1", key="back_step5_lock"):
@@ -581,7 +580,7 @@ elif st.session_state.step == 5:
 # ============================================================
 # PAGE 6: DEVELOPERS TEAM PAGE SLIDESHOW (12 MEMBERS)
 # ============================================================
-elif st.session_state.step == 6:
+if st.session_state.step == 6:
     if not st.session_state.auth_verified or "results" not in st.session_state:
         st.error("⛔ ACCESS LOCKED: Please complete previous mandatory steps first.")
         if st.button("⬅️ Go Back to Step 1", key="back_step6_lock"):
