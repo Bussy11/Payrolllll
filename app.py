@@ -61,32 +61,39 @@ st.markdown("""
     font-weight: bold !important;
 }
 </style>
-""", unsafe_allow_html=True)
-    padding: 15px;
-        border-radius: 12px;
-        border: 2px solid #008751;
-        box-shadow: 0px 4px 15px rgba(0, 135, 81, 0.15);
-        text-align: center;
-        margin-bottom: 15px;
-    }
-    .top-title {
-        color: #008751;
-        font-weight: 900;
-        font-size: 22px;
-        text-transform: uppercase;
-        margin: 5px 0 2px 0;
-    }
-    .top-sub {
-        color: #1b5e20;
-        font-size: 13px;
-        font-weight: 700;
-        margin: 0;
-    }
-    .stButton>button {
-        background-color: #008751 !important;
-        color: white !important;
-        font-weight: bold !important;
-    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# ============================================================
+# TOP HEADER: CENTERED SCHOOL LOGO & TITLE, WITH COAT OF ARMS & EFCC BELOW
+# ============================================================
+st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
+
+_, col_center, _ = st.columns([1, 3, 1])
+
+with col_center:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    
+    logo_found = False
+    for filename in ["school_logo.jpeg", "school_logo.jpg", "school_logo.png", "logo.jpeg", "logo.jpg", "logo.png"]:
+        if os.path.exists(filename):
+            st.image(filename, width=100)
+            logo_found = True
+            break
+            
+    if not logo_found:
+        st.write("🏫 IBS Logo")
+        
+    st.markdown("""
+        <div class="top-header" style="margin-top: 6px; padding: 10px;">
+            <p class="top-title">International Business School</p>
+            <p class="top-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
+        </div>
+    """, unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
     
  # ============================================================
 # TOP HEADER: PERFECTLY CENTERED INSTITUTIONAL LAYOUT
