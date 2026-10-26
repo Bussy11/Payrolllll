@@ -593,7 +593,7 @@ if st.session_state.step == 6:
 
     developers = [
         {
-            "name": "A. O. Juwon",
+            "name": "A. O. JUWON",
             "address": "Ejuku, Yagba East LGA",
             "state": "Kogi State",
             "education": "NCE, B.Sc., M.Sc. (In View)",
@@ -606,7 +606,7 @@ if st.session_state.step == 6:
             "address": "ODO-ERE, YAGBA WEST LG",
             "state": "KOGI STATE",
             "education": "B. Sc",
-            "role": "DATA COLLECTION TEAM",
+            "role": "AI TEAM",
             "marital_status": "MARRIED",
             "image": "developer 2.jpeg"
         },
@@ -614,7 +614,7 @@ if st.session_state.step == 6:
             "name": "IBITOYE MAYOMIKUN JONATHAN",
             "address": "ISANLU, YAGBA EAST LG",
             "state": "KOGI STATE",
-            "education": "B. ENG. ILORIN",
+            "education": "B.Sc (ENG) ILORIN",
             "role": "DATA COLLECTION TEAM",
             "marital_status": "Single",
             "image": "developer 3.jpeg"
@@ -623,7 +623,7 @@ if st.session_state.step == 6:
             "name": "OLUKAIYE OLUGBENGA TIMOTHY",
             "address": "BOLORUNDURO KABBA, KABBA BUNU LG",
             "state": "KOGI STATE",
-            "education": "B. ENG, CUSTECH Osara",
+            "education": "B.Sc. (ENGINEERING), CUSTECH Osara",
             "role": "PROBLEM SOLVING TEAM",
             "marital_status": "Single",
             "image": "developer 4.jpeg"
@@ -674,7 +674,7 @@ if st.session_state.step == 6:
             "image": "developer 9.jpeg"
         },
         {
-            "name": "RACHEAL OLORUNMAIYE",
+            "name": "RACHEAL OLORUNMAIYE (Shellie)",
             "address": "KABBA BUNNU, LG",
             "state": "KOGI STATE",
             "education": "B.Sc",
