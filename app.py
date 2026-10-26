@@ -61,48 +61,50 @@ st.markdown("""
         color: white !important;
         font-weight: bold !important;
     }
-    </style>
-""", unsafe_allow_html=True)
-
+        
 # ============================================================
-# TOP HEADER WITH TRIPLE LOGO SUPPORT (SCHOOL, COAT OF ARMS, EFCC)
+# TOP HEADER: PROMINENT CENTERED SCHOOL LOGO & SIDE LOGOS
 # ============================================================
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
-# 4 columns to balance the 3 logos and the center title text
-col_logo1, col_logo2, col_title, col_logo3 = st.columns([1, 1, 4, 1])
+col_left, col_center, col_right = st.columns([1, 2, 1])
 
-with col_logo1:
-    if os.path.exists("school_logo.jpeg"):
-        st.image("school_logo.jpeg", width=65)
-    elif os.path.exists("school_logo.jpg"):
-        st.image("school_logo.jpg", width=65)
-    else:
-        st.write("🏫 IBS Logo")
-
-with col_logo2:
+with col_left:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     if os.path.exists("coat_of_arms.jpeg"):
-        st.image("coat_of_arms.jpeg", width=65)
+        st.image("coat_of_arms.jpeg", width=55)
     elif os.path.exists("coat_of_arms.jpg"):
-        st.image("coat_of_arms.jpg", width=65)
+        st.image("coat_of_arms.jpg", width=55)
     else:
         st.write("🇳🇬 Coat of Arms")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-with col_title:
+with col_center:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    if os.path.exists("school_logo.jpeg"):
+        st.image("school_logo.jpeg", width=95)
+    elif os.path.exists("school_logo.jpg"):
+        st.image("school_logo.jpg", width=95)
+    else:
+        st.write("🏫 IBS Logo")
+        
     st.markdown("""
-        <div class="top-header" style="padding: 10px;">
-            <p class="top-title" style="font-size: 18px;">International Business School</p>
-            <p class="top-sub" style="font-size: 11px;">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
+        <div class="top-header" style="margin-top: 5px; padding: 8px;">
+            <p class="top-title" style="font-size: 16px; margin: 0;">International Business School</p>
+            <p class="top-sub" style="font-size: 10px; margin: 0;">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
         </div>
     """, unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-with col_logo3:
+with col_right:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     if os.path.exists("efcc_logo.jpeg"):
-        st.image("efcc_logo.jpeg", width=65)
+        st.image("efcc_logo.jpeg", width=55)
     elif os.path.exists("efcc_logo.jpg"):
-        st.image("efcc_logo.jpg", width=65)
+        st.image("efcc_logo.jpg", width=55)
     else:
         st.write("🦅 EFCC Logo")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
@@ -542,7 +544,7 @@ elif st.session_state.step == 6:
             "name": "ADEWUMI BISIRIYU TUNDE",
             "address": "IFE_OLUKOTUN, YAGBA EAST LG",
             "state": "KOGI STATE",
-            "education": "B. Sc, NCA, NBA (in view)",
+            "education": "B. Sc, CNA, NBA (in view)",
             "role": "DATA COLLECTION TEAM",
             "marital_status": "MARRIED",
             "image": "developer 6.jpeg"
