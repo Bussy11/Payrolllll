@@ -23,7 +23,7 @@ st.set_page_config(
 )
 
 # Custom Styling
-        st.markdown(
+st.markdown(
             f"""
             <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #008751; margin-top: 15px;">
                 <h4 style="color: #008751; margin: 0 0 5px 0;">Official Session Active</h4>
