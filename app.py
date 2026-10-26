@@ -676,12 +676,12 @@ elif st.session_state.step == 6:
             "image": "developer 11.jpeg"
         },
         {
-            "name": "Team Member 12",
-            "address": "Address 12",
-            "state": "State 12",
-            "education": "Education 12",
-            "role": "Role 12",
-            "marital_status": "Single",
+            "name": "OLUWATOSIN MOSES O",
+            "address": "EGBE, YAGBA WEST",
+            "state": "KOGI STATE",
+            "education": "B. Sc in (Sociology)",
+            "role": "AI TEAM",
+            "marital_status": "MARRIED",
             "image": "developer12.jpeg"
         }
     ]
