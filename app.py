@@ -21,48 +21,48 @@ st.set_page_config(
     page_icon="🇳🇬",
     layout="wide"
 )
-
 # Custom Styling
 st.markdown("""
-    <style>
-    .stApp {
-        background-color: #f7f9f8;
-    }
-    .nigeria-banner {
-        background-color: #008751;
-        height: 10px;
-        border-radius: 4px;
-        margin-bottom: 15px;
-    }
-    .top-header {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 12px;
-        border: 2px solid #008751;
-        box-shadow: 0px 4px 15px rgba(0, 135, 81, 0.15);
-        text-align: center;
-        margin-bottom: 15px;
-    }
-    .top-title {
-        color: #008751;
-        font-weight: 900;
-        font-size: 22px;
-        text-transform: uppercase;
-        margin: 5px 0 2px 0;
-    }
-    .top-sub {
-        color: #1b5e20;
-        font-size: 13px;
-        font-weight: 700;
-        margin: 0;
-    }
-    .stButton>button {
-        background-color: #008751 !important;
-        color: white !important;
-        font-weight: bold !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+<style>
+.stApp {
+    background-color: #f7f9f8;
+}
+.nigeria-banner {
+    background-color: #008751;
+    height: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+.top-header {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid #008751;
+    box-shadow: 0px 4px 15px rgba(0, 135, 81, 0.15);
+    text-align: center;
+    margin-bottom: 15px;
+}
+.top-title {
+    color: #008751;
+    font-weight: 900;
+    font-size: 22px;
+    text-transform: uppercase;
+    margin: 5px 0 2px 0;
+}
+.top-sub {
+    color: #1b5e20;
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0;
+}
+.stButton>button {
+    background-color: #008751 !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
         padding: 15px;
         border-radius: 12px;
         border: 2px solid #008751;
