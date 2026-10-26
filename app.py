@@ -119,22 +119,22 @@ with col_school:
 st.markdown('<div class="nigeria-banner" style="margin-top: 10px;"></div>', unsafe_allow_html=True)
 
 # ============================================================
-# INITIALIZE SESSION STATES
+# INITIALIZE SESSION STATES (Starts at Step 1)
 # ============================================================
 if "auth_verified" not in st.session_state:
-    st.session_state.auth_verified = True
-    st.session_state.full_name = " "
-    st.session_state.address = " "
-    st.session_state.contact = " "
+    st.session_state.auth_verified = False
+    st.session_state.full_name = ""
+    st.session_state.address = ""
+    st.session_state.contact = ""
 
 if "step" not in st.session_state:
-    st.session_state.step = 2
+    st.session_state.step = 1
 
 if "dev_index" not in st.session_state:
     st.session_state.dev_index = 0
 
 # ============================================================
-# MAIN BODY STEP NAVIGATION BAR (6 CENTRAL BUTTONS)
+# MAIN BODY STEP NAVIGATION BAR (WITH STAGE LOCKS)
 # ============================================================
 st.markdown("### 📌 Navigation Menu")
 step_names = {
@@ -151,8 +151,13 @@ for s_num, s_name in step_names.items():
     with nav_cols[s_num - 1]:
         btn_label = f"📍 {s_num}" if st.session_state.step != s_num else f"👉 [{s_num}]"
         if st.button(btn_label, use_container_width=True, key=f"nav_btn_{s_num}"):
-            if s_num > 1 and not st.session_state.auth_verified:
+            # Stage lock logic: prevent jumping ahead if prerequisites aren't met
+            if s_num > 1 and (not st.session_state.auth_verified or not st.session_state.full_name.strip()):
                 st.warning("⛔ ACCESS LOCKED: Please complete and confirm valid authorization on Step 1 first.")
+            elif s_num > 2 and "df" not in st.session_state:
+                st.warning("⛔ ACCESS LOCKED: Please load or generate a dataset on Step 2 first.")
+            elif s_num > 3 and "results" not in st.session_state:
+                st.warning("⛔ ACCESS LOCKED: Please run AI Model Analysis on Step 3 first.")
             else:
                 st.session_state.step = s_num
                 st.rerun()
@@ -218,6 +223,13 @@ if st.session_state.step == 1:
 # PAGE 2: DATA INPUT & CLEANING
 # ============================================================
 elif st.session_state.step == 2:
+    if not st.session_state.auth_verified or not st.session_state.full_name.strip():
+        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
+        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step2_auth"):
+            st.session_state.step = 1
+            st.rerun()
+        st.stop()
+
     st.header("📂 Payroll Data Input & Cleaning")
     
     data_choice = st.radio(
@@ -290,18 +302,20 @@ elif st.session_state.step == 2:
 # ============================================================
 elif st.session_state.step == 3:
     if not st.session_state.auth_verified:
-        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
+        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 first.")
         if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step3"):
             st.session_state.step = 1
+            st.rerun()
+        st.stop()
+    if "df" not in st.session_state:
+        st.error("⛔ ACCESS LOCKED: Please load or generate data on Step 2 first.")
+        if st.button("⬅️ Go Back to Step 2: Data Input", key="back_step3_data"):
+            st.session_state.step = 2
             st.rerun()
         st.stop()
 
     st.header("🤖 AI Model Training & Anomaly Detection")
     
-    if "df" not in st.session_state:
-        st.warning("⚠️ Please complete Data Input (Step 2) first.")
-        st.stop()
-        
     df = st.session_state.df
     contamination_rate = st.slider("Expected Anomaly Sensitivity Rate (%):", 1, 20, 7) / 100.0
     
@@ -443,67 +457,70 @@ def chart_allowance_scatter(d):
 # ============================================================
 # PAGE 4: VISUALIZATIONS & REPORTS (COMPREHENSIVE GRAPH SUITE)
 # ============================================================
-if st.session_state.step == 4:
+elif st.session_state.step == 4:
     if not st.session_state.auth_verified:
-        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
-        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step4"):
+        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 first.")
+        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step4_auth"):
             st.session_state.step = 1
+            st.rerun()
+        st.stop()
+    if "results" not in st.session_state:
+        st.error("⛔ ACCESS LOCKED: Please run AI Model Analysis on Step 3 first.")
+        if st.button("⬅️ Go Back to Step 3: AI Analysis", key="back_step4_ai"):
+            st.session_state.step = 3
             st.rerun()
         st.stop()
 
     st.header("📊 Advanced Payroll Analytics & Forensic Graphs")
     
-    if "results" not in st.session_state:
-        st.warning("⚠️ Please run AI Model Analysis on Step 3 first.")
-    else:
-        results = st.session_state.results
-        flagged_records = st.session_state.flagged_records
+    results = st.session_state.results
+    flagged_records = st.session_state.flagged_records
+    
+    st.subheader("1. Dimensional Reduction & Regional Risk Analysis")
+    col_v1, col_v2 = st.columns(2)
+    with col_v1:
+        st.pyplot(chart_pca(results))
+    with col_v2:
+        st.pyplot(chart_lga(results))
+
+    st.divider()
+
+    st.subheader("2. Anomaly Counts & Proportion Share")
+    col_v3, col_v4 = st.columns(2)
+    with col_v3:
+        st.pyplot(chart_status_bar(results))
+    with col_v4:
+        st.pyplot(chart_status_pie(results))
+
+    st.divider()
+
+    st.subheader("3. Distributional Depth & Financial Correlation Analysis")
+    col_v5, col_v6 = st.columns(2)
+    with col_v5:
+        st.pyplot(chart_salary_dist(results))
+    with col_v6:
+        st.pyplot(chart_allowance_scatter(results))
         
-        st.subheader("1. Dimensional Reduction & Regional Risk Analysis")
-        col_v1, col_v2 = st.columns(2)
-        with col_v1:
-            st.pyplot(chart_pca(results))
-        with col_v2:
-            st.pyplot(chart_lga(results))
-
-        st.divider()
-
-        st.subheader("2. Anomaly Counts & Proportion Share")
-        col_v3, col_v4 = st.columns(2)
-        with col_v3:
-            st.pyplot(chart_status_bar(results))
-        with col_v4:
-            st.pyplot(chart_status_pie(results))
-
-        st.divider()
-
-        st.subheader("3. Distributional Depth & Financial Correlation Analysis")
-        col_v5, col_v6 = st.columns(2)
-        with col_v5:
-            st.pyplot(chart_salary_dist(results))
-        with col_v6:
-            st.pyplot(chart_allowance_scatter(results))
-            
-        st.divider()
-        st.subheader("📦 Download Audit Package")
-        summary_df = pd.DataFrame({
-            "ReportItem": ["System", "DateTime", "Investigator", "Contact", "TotalRecords", "FlaggedRecords"],
-            "Value": ["Federal Republic of Nigeria Payroll System", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), st.session_state.full_name, st.session_state.contact, len(results), len(flagged_records)]
-        })
+    st.divider()
+    st.subheader("📦 Download Audit Package")
+    summary_df = pd.DataFrame({
+        "ReportItem": ["System", "DateTime", "Investigator", "Contact", "TotalRecords", "FlaggedRecords"],
+        "Value": ["Federal Republic of Nigeria Payroll System", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), st.session_state.full_name, st.session_state.contact, len(results), len(flagged_records)]
+    })
+    
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("nigeria_payroll_summary.csv", summary_df.to_csv(index=False))
+        zf.writestr("full_results.csv", results.to_csv(index=False))
+        zf.writestr("flagged_records.csv", flagged_records.to_csv(index=False))
         
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
-            zf.writestr("nigeria_payroll_summary.csv", summary_df.to_csv(index=False))
-            zf.writestr("full_results.csv", results.to_csv(index=False))
-            zf.writestr("flagged_records.csv", flagged_records.to_csv(index=False))
-            
-        st.download_button(
-            label="📥 Download Official Audit ZIP Package",
-            data=zip_buffer.getvalue(),
-            file_name=f"Nigeria_Payroll_Audit_{datetime.now().strftime('%Y%m%d')}.zip",
-            mime="application/zip",
-            use_container_width=True
-        )
+    st.download_button(
+        label="📥 Download Official Audit ZIP Package",
+        data=zip_buffer.getvalue(),
+        file_name=f"Nigeria_Payroll_Audit_{datetime.now().strftime('%Y%m%d')}.zip",
+        mime="application/zip",
+        use_container_width=True
+    )
 
     st.markdown("")
     col_b1, col_b2 = st.columns(2)
@@ -520,9 +537,9 @@ if st.session_state.step == 4:
 # PAGE 5: Q&A ASSISTANT & KUDOS
 # ============================================================
 elif st.session_state.step == 5:
-    if not st.session_state.auth_verified:
-        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
-        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step5"):
+    if not st.session_state.auth_verified or "results" not in st.session_state:
+        st.error("⛔ ACCESS LOCKED: Please complete previous mandatory steps first.")
+        if st.button("⬅️ Go Back to Step 1", key="back_step5_lock"):
             st.session_state.step = 1
             st.rerun()
         st.stop()
@@ -565,9 +582,9 @@ elif st.session_state.step == 5:
 # PAGE 6: DEVELOPERS TEAM PAGE SLIDESHOW (12 MEMBERS)
 # ============================================================
 elif st.session_state.step == 6:
-    if not st.session_state.auth_verified:
-        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
-        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step6"):
+    if not st.session_state.auth_verified or "results" not in st.session_state:
+        st.error("⛔ ACCESS LOCKED: Please complete previous mandatory steps first.")
+        if st.button("⬅️ Go Back to Step 1", key="back_step6_lock"):
             st.session_state.step = 1
             st.rerun()
         st.stop()
@@ -590,7 +607,7 @@ elif st.session_state.step == 6:
             "address": "ODO-ERE, YAGBA WEST LG",
             "state": "KOGI STATE",
             "education": "B. Sc",
-            "role": "AI TEAM",
+            "role": "DATA COLLECTION TEAM",
             "marital_status": "MARRIED",
             "image": "developer 2.jpeg"
         },
@@ -676,13 +693,13 @@ elif st.session_state.step == 6:
             "image": "developer 11.jpeg"
         },
         {
-            "name": "OLUWATOSIN MOSES O",
-            "address": "EGBE, YAGBA WEST",
-            "state": "KOGI STATE",
-            "education": "B. Sc in (Sociology)",
-            "role": "AI TEAM",
-            "marital_status": "MARRIED",
-            "image": "developer 12.jpeg"
+            "name": "Team Member 12",
+            "address": "Address 12",
+            "state": "State 12",
+            "education": "Education 12",
+            "role": "Role 12",
+            "marital_status": "Single",
+            "image": "developer12.jpeg"
         }
     ]
 
