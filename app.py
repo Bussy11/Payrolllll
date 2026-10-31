@@ -182,7 +182,7 @@ with col_title:
     st.markdown("""
         <div class="top-header" style="margin-top: 5px; padding: 10px;">
             <p class="top-title">International Business School</p>
-            <p class="top-sub">AI Payroll Anomaly Detection & EFCC Forensic Audit Portal</p>
+            <p class="top-sub">AI Payroll Anomaly Detection System & Forensic Audit Portal</p>
         </div>
     """, unsafe_allow_html=True)
 
