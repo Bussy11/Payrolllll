@@ -641,7 +641,7 @@ if st.session_state.step == 6:
             "name": "ADEWUMI BISIRIYU TUNDE",
             "address": "IFE_OLUKOTUN, YAGBA EAST LG",
             "state": "KOGI STATE",
-            "education": "B. Sc, CNA, NBA (in view)",
+            "education": "B. Sc, CNA, MBA (in view)",
             "role": "DATA COLLECTION TEAM",
             "marital_status": "MARRIED",
             "image": "developer 6.jpeg"
