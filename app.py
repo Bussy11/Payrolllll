@@ -68,7 +68,6 @@ st.markdown("""
     margin: 0;
 }
 .stButton>button {
-    background-color: #008751 !important;
     color: white !important;
     font-weight: bold !important;
     border-radius: 8px !important;
@@ -626,19 +625,10 @@ if st.session_state.step == 6:
         {"name": "OLUWATOSIN MOSES O", "address": "ODO-ERE, YAGBA WEST", "state": "KOGI STATE", "education": "B.Sc., (Sociology)", "role": "AI TEAM", "marital_status": "MARRIED", "image": "developer 12.jpeg"}
     ]
 
-    col_prev, col_next = st.columns(2)
-    with col_prev:
-        if st.button("⬅️ Previous", use_container_width=True):
-            st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
-            st.rerun()
-    with col_next:
-        if st.button("Next ➡️", use_container_width=True):
-            st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
-            st.rerun()
-
     current_dev = developers[st.session_state.dev_index]
     st.markdown("---")
     
+    # 1. Picture Display
     img_file = current_dev["image"]
     img_alt = img_file.replace(".jpeg", ".jpg") if ".jpeg" in img_file else img_file.replace(".jpg", ".jpeg")
     
@@ -649,6 +639,7 @@ if st.session_state.step == 6:
     else:
         st.info(f"🖼️ Photo: {current_dev['image']}")
 
+    # 2. Profile Details Display
     st.subheader(current_dev["name"])
     st.markdown(f"📍 **Address:** {current_dev['address']}")
     st.markdown(f"🏛️ **State:** {current_dev['state']}")
@@ -656,6 +647,31 @@ if st.session_state.step == 6:
     st.markdown(f"💼 **Role:** {current_dev['role']}")
     st.markdown(f"💍 **Marital Status:** {current_dev['marital_status']}")
     st.caption(f"Developer {st.session_state.dev_index + 1} of {len(developers)}")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 3. Previous and Next Buttons (Placed below picture & profile, different colors, close to one another)
+    st.markdown("""
+    <style>
+    /* Custom styling to give Previous and Next distinct colors */
+    div[data-testid="column"] button:has-text("Previous") {
+        background-color: #008751 !important;
+    }
+    div[data-testid="column"] button:has-text("Next") {
+        background-color: #37474f !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    col_prev, col_next = st.columns(2)
+    with col_prev:
+        if st.button("⬅️ Previous", use_container_width=True, key="prev_dev_btn"):
+            st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
+            st.rerun()
+    with col_next:
+        if st.button("Next ➡️", use_container_width=True, key="next_dev_btn"):
+            st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
+            st.rerun()
 
     st.markdown("")
     if st.button("⬅️ Back to Q&A Assistant", use_container_width=True):
