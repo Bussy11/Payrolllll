@@ -68,6 +68,7 @@ st.markdown("""
     margin: 0;
 }
 .stButton>button {
+    background-color: #008751 !important;
     color: white !important;
     font-weight: bold !important;
     border-radius: 8px !important;
@@ -100,6 +101,39 @@ st.markdown("""
     font-weight: 900;
     font-size: 1.25rem;
     margin: 0;
+}
+/* Compact Developer Navigation Buttons */
+.dev-nav-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.dev-btn-prev {
+    background-color: #008751 !important;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
+}
+.dev-btn-next {
+    background-color: #d32f2f !important;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -248,6 +282,17 @@ if "step" not in st.session_state:
 
 if "dev_index" not in st.session_state:
     st.session_state.dev_index = 0
+
+# Handle query params / button actions for dev pagination if triggered via custom HTML
+if "nav_action" in st.query_params:
+    action = st.query_params["nav_action"]
+    total_devs = 12
+    if action == "prev":
+        st.session_state.dev_index = (st.session_state.dev_index - 1) % total_devs
+    elif action == "next":
+        st.session_state.dev_index = (st.session_state.dev_index + 1) % total_devs
+    st.query_params.clear()
+    st.rerun()
 
 # ============================================================
 # NAVIGATION MENU + RED NEWS BUTTON (Linked to nairaland.com)
@@ -650,30 +695,15 @@ if st.session_state.step == 6:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # 3. Previous and Next Buttons (Placed below picture & profile, different colors, close to one another)
-    st.markdown("""
-    <style>
-    /* Custom styling to give Previous and Next distinct colors */
-    div[data-testid="column"] button:has-text("Previous") {
-        background-color: #008751 !important;
-    }
-    div[data-testid="column"] button:has-text("Next") {
-        background-color: #37474f !important;
-    }
-    </style>
+    # 3. Short Side-by-Side Previous (Green) and Next (Red) Buttons using HTML/CSS Flex
+    st.markdown(f"""
+    <div style="display: flex; gap: 10px; width: 100%;">
+        <a href="?nav_action=prev" class="dev-btn-prev">⬅️ Previous</a>
+        <a href="?nav_action=next" class="dev-btn-next">Next ➡️</a>
+    </div>
     """, unsafe_allow_html=True)
 
-    col_prev, col_next = st.columns(2)
-    with col_prev:
-        if st.button("⬅️ Previous", use_container_width=True, key="prev_dev_btn"):
-            st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
-            st.rerun()
-    with col_next:
-        if st.button("Next ➡️", use_container_width=True, key="next_dev_btn"):
-            st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
-            st.rerun()
-
-    st.markdown("")
+    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⬅️ Back to Q&A Assistant", use_container_width=True):
         st.session_state.step = 5
         st.rerun()
