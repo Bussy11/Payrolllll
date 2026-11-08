@@ -102,14 +102,16 @@ st.markdown("""
     font-size: 1.25rem;
     margin: 0;
 }
-/* Specific styling for Previous (Green) and Next (Red) Developer Buttons */
-button[kind="secondary"]#prev-dev-btn {
+/* Compact Side-by-Side Developer Buttons with Distinct Colors */
+div.stButton > button[key="dev_prev_native"] {
     background-color: #008751 !important;
     color: white !important;
+    width: auto !important;
 }
-button[kind="secondary"]#next-dev-btn {
+div.stButton > button[key="dev_next_native"] {
     background-color: #d32f2f !important;
     color: white !important;
+    width: auto !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -660,22 +662,33 @@ if st.session_state.step == 6:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # 3. Compact Previous (Green) and Next (Red) Buttons using native Streamlit columns with custom element IDs
-    col_btn1, col_btn2, col_space = st.columns([1, 1, 2])
-    
-    with col_btn1:
-        st.markdown('<div id="prev-dev-btn">', unsafe_allow_html=True)
-        if st.button("⬅️ Prev", key="dev_prev_native"):
+    # 3. Compact Side-by-Side Previous (Green) and Next (Red) Buttons using pure CSS styling targeting button text/keys
+    st.markdown("""
+    <style>
+    /* Target Previous Button Container inside columns to be Green and compact */
+    div[data-testid="column"]:has(button[key="dev_prev_btn"]) button {
+        background-color: #008751 !important;
+        color: white !important;
+        width: 100% !important;
+    }
+    /* Target Next Button Container inside columns to be Red and compact */
+    div[data-testid="column"]:has(button[key="dev_next_btn"]) button {
+        background-color: #d32f2f !important;
+        color: white !important;
+        width: 100% !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    b_col1, b_col2, b_col3 = st.columns([1, 1, 2])
+    with b_col1:
+        if st.button("⬅️ Prev", key="dev_prev_btn"):
             st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
             st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-    with col_btn2:
-        st.markdown('<div id="next-dev-btn">', unsafe_allow_html=True)
-        if st.button("Next ➡️", key="dev_next_native"):
+    with b_col2:
+        if st.button("Next ➡️", key="dev_next_btn"):
             st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
             st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⬅️ Back to Q&A Assistant", use_container_width=True):
