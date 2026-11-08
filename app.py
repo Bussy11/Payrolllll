@@ -24,11 +24,10 @@ st.set_page_config(
 )
 
 # ============================================================
-# MOBILE-RESPONSIVE CSS INJECTION
+# CUSTOM STYLING
 # ============================================================
 st.markdown("""
 <style>
-/* Base Setup */
 .stApp {
     background-color: #f7f9f8;
 }
@@ -38,45 +37,28 @@ st.markdown("""
     border-radius: 4px;
     margin-bottom: 10px;
 }
-
-/* Header Container */
 .top-header {
     background-color: #ffffff;
-    padding: 12px;
+    padding: 10px;
     border-radius: 12px;
     border: 2px solid #008751;
     box-shadow: 0px 4px 15px rgba(0, 135, 81, 0.15);
     text-align: center;
-    margin: 10px 0;
+    margin: 0;
 }
 .top-title {
     color: #008751;
     font-weight: 900;
-    font-size: 18px;
+    font-size: 15px;
     text-transform: uppercase;
-    margin: 4px 0 2px 0;
+    margin: 2px 0;
 }
 .top-sub {
     color: #1b5e20;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     margin: 0;
 }
-
-/* Responsive Header Layout for Mobile */
-.responsive-header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-.header-logo {
-    max-width: 60px;
-    height: auto;
-}
-
-/* Primary Button Customization */
 .stButton>button {
     background-color: #008751 !important;
     color: white !important;
@@ -176,18 +158,20 @@ def chart_allowance_scatter(d):
     return fig
 
 # ============================================================
-# TOP HEADER SECTION (Responsive 3-Column Header)
+# TOP HEADER SECTION (Fixed Small Logo Sizes, Side-by-Side)
 # ============================================================
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
-col_arm, col_title, col_school = st.columns([1, 2, 1])
+col_arm, col_title, col_school = st.columns([1, 3, 1])
 
 with col_arm:
+    st.markdown("<div style='text-align: left;'>", unsafe_allow_html=True)
     coat_arms_file = "coat_of_arms.jpeg" if os.path.exists("coat_of_arms.jpeg") else "coat_of_arms.jpg" if os.path.exists("coat_of_arms.jpg") else None
     if coat_arms_file:
-        st.image(coat_arms_file, use_container_width=True)
+        st.image(coat_arms_file, width=65)
     else:
-        st.markdown("<p style='text-align:center;'>🇳🇬</p>", unsafe_allow_html=True)
+        st.write("🇳🇬")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col_title:
     st.markdown("""
@@ -198,17 +182,19 @@ with col_title:
     """, unsafe_allow_html=True)
 
 with col_school:
+    st.markdown("<div style='text-align: right;'>", unsafe_allow_html=True)
     logo_file = None
     for filename in ["school_logo.jpeg", "school_logo.jpg", "school_logo.png", "logo.jpeg", "logo.jpg", "logo.png"]:
         if os.path.exists(filename):
             logo_file = filename
             break
     if logo_file:
-        st.image(logo_file, use_container_width=True)
+        st.image(logo_file, width=65)
     else:
-        st.markdown("<p style='text-align:center;'>🏫</p>", unsafe_allow_html=True)
+        st.write("🏫")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
+st.markdown('<div class="nigeria-banner" style="margin-top: 10px;"></div>', unsafe_allow_html=True)
 
 # ============================================================
 # INITIALIZE SESSION STATES
@@ -226,7 +212,7 @@ if "dev_index" not in st.session_state:
     st.session_state.dev_index = 0
 
 # ============================================================
-# MOBILE-FRIENDLY NAVIGATION MENU (Dropdown + Step Buttons)
+# NAVIGATION MENU (Sidebar Selectbox for clean mobile UI)
 # ============================================================
 step_names = {
     1: "1. Authorization",
@@ -237,7 +223,6 @@ step_names = {
     6: "6. Developers"
 }
 
-# Sidebar Selectbox Navigation for Quick Mobile Access
 selected_step_name = st.sidebar.selectbox(
     "📱 Quick Navigation", 
     options=list(step_names.values()),
