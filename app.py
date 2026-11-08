@@ -251,7 +251,7 @@ if "dev_index" not in st.session_state:
     st.session_state.dev_index = 0
 
 # ============================================================
-# NAVIGATION MENU + RED NEWS BUTTON
+# NAVIGATION MENU + RED NEWS BUTTON (Linked to nairaland.com)
 # ============================================================
 step_names = {
     1: "1. Authorization",
@@ -275,11 +275,11 @@ with col_nav:
 
     if selected_step != st.session_state.step:
         if selected_step > 1 and (not st.session_state.auth_verified or not st.session_state.full_name.strip()):
-            st.warning("⛔ Complete Authorization on Step 1 first.")
+            st.sidebar.warning("⛔ Complete Authorization on Step 1 first.")
         elif selected_step > 2 and "df" not in st.session_state:
-            st.warning("⛔ Load data on Step 2 first.")
+            st.sidebar.warning("⛔ Load data on Step 2 first.")
         elif selected_step > 3 and "results" not in st.session_state:
-            st.warning("⛔ Run AI Analysis on Step 3 first.")
+            st.sidebar.warning("⛔ Run AI Analysis on Step 3 first.")
         else:
             st.session_state.step = selected_step
             st.rerun()
@@ -287,7 +287,7 @@ with col_nav:
 with col_news:
     st.markdown("""
         <div class="news-btn-container" style="text-align: right; padding-top: 5px;">
-            <a href="https://www.nairaland.com/news" target="_blank">📰 NEWS</a>
+            <a href="https://www.nairaland.com" target="_blank">📰 NEWS</a>
         </div>
     """, unsafe_allow_html=True)
 
