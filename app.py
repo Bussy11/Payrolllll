@@ -102,6 +102,15 @@ st.markdown("""
     font-size: 1.25rem;
     margin: 0;
 }
+/* Specific styling for Previous (Green) and Next (Red) Developer Buttons */
+button[kind="secondary"]#prev-dev-btn {
+    background-color: #008751 !important;
+    color: white !important;
+}
+button[kind="secondary"]#next-dev-btn {
+    background-color: #d32f2f !important;
+    color: white !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -249,17 +258,6 @@ if "step" not in st.session_state:
 
 if "dev_index" not in st.session_state:
     st.session_state.dev_index = 0
-
-# Check action query params for developer page switching without full page errors
-if "dev_nav" in st.query_params:
-    action = st.query_params["dev_nav"]
-    total_devs = 12
-    if action == "prev":
-        st.session_state.dev_index = (st.session_state.dev_index - 1) % total_devs
-    elif action == "next":
-        st.session_state.dev_index = (st.session_state.dev_index + 1) % total_devs
-    st.query_params.clear()
-    st.rerun()
 
 # ============================================================
 # NAVIGATION MENU + RED NEWS BUTTON (Linked to nairaland.com)
@@ -662,45 +660,22 @@ if st.session_state.step == 6:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # 3. Compact Previous (Green) and Next (Red) Buttons using HTML links with query params for seamless cycling
-    st.markdown(f"""
-    <style>
-    .dev-btn-flex {{
-        display: flex;
-        gap: 10px;
-        width: 100%;
-        margin-top: 10px;
-    }}
-    .dev-btn-green {{
-        background-color: #008751 !important;
-        color: white !important;
-        padding: 8px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: bold;
-        font-size: 13px;
-        text-align: center;
-        flex: 1;
-        box-shadow: 0px 2px 5px rgba(0, 135, 81, 0.3);
-    }}
-    .dev-btn-red {{
-        background-color: #d32f2f !important;
-        color: white !important;
-        padding: 8px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: bold;
-        font-size: 13px;
-        text-align: center;
-        flex: 1;
-        box-shadow: 0px 2px 5px rgba(211, 47, 47, 0.3);
-    }}
-    </style>
-    <div class="dev-btn-flex">
-        <a href="?dev_nav=prev" class="dev-btn-green">⬅️ Previous</a>
-        <a href="?dev_nav=next" class="dev-btn-red">Next ➡️</a>
-    </div>
-    """, unsafe_allow_html=True)
+    # 3. Compact Previous (Green) and Next (Red) Buttons using native Streamlit columns with custom element IDs
+    col_btn1, col_btn2, col_space = st.columns([1, 1, 2])
+    
+    with col_btn1:
+        st.markdown('<div id="prev-dev-btn">', unsafe_allow_html=True)
+        if st.button("⬅️ Prev", key="dev_prev_native"):
+            st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+    with col_btn2:
+        st.markdown('<div id="next-dev-btn">', unsafe_allow_html=True)
+        if st.button("Next ➡️", key="dev_next_native"):
+            st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⬅️ Back to Q&A Assistant", use_container_width=True):
