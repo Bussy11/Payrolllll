@@ -24,93 +24,115 @@ st.set_page_config(
 )
 
 # ============================================================
-# CUSTOM STYLING (Clean & Error-Free)
+# MOBILE-RESPONSIVE CSS INJECTION
 # ============================================================
 st.markdown("""
 <style>
+/* Base Setup */
 .stApp {
     background-color: #f7f9f8;
 }
 .nigeria-banner {
     background-color: #008751;
-    height: 10px;
+    height: 8px;
     border-radius: 4px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
+
+/* Header Container */
 .top-header {
     background-color: #ffffff;
-    padding: 15px;
+    padding: 12px;
     border-radius: 12px;
     border: 2px solid #008751;
     box-shadow: 0px 4px 15px rgba(0, 135, 81, 0.15);
     text-align: center;
-    margin-bottom: 15px;
+    margin: 10px 0;
 }
 .top-title {
     color: #008751;
     font-weight: 900;
-    font-size: 20px;
+    font-size: 18px;
     text-transform: uppercase;
-    margin: 5px 0 2px 0;
+    margin: 4px 0 2px 0;
 }
 .top-sub {
     color: #1b5e20;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     margin: 0;
 }
+
+/* Responsive Header Layout for Mobile */
+.responsive-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.header-logo {
+    max-width: 60px;
+    height: auto;
+}
+
+/* Primary Button Customization */
 .stButton>button {
     background-color: #008751 !important;
     color: white !important;
     font-weight: bold !important;
+    border-radius: 8px !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ============================================================
-# CHART FUNCTIONS DEFINITION (Placed at Top)
+# CHART FUNCTIONS DEFINITION (Responsive Matplotlib Figures)
 # ============================================================
 def chart_pca(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(5, 3.5))
     n = d[~d["flagged"]]
     f = d[d["flagged"]]
     ax.scatter(n["pc1"], n["pc2"], s=12, c="#008751", label="Normal", alpha=0.7)
     ax.scatter(f["pc1"], f["pc2"], s=35, c="#d32f2f", marker="x", label="Flagged")
     ax.set_title("Payroll Records (PCA View)", fontweight='bold', fontsize=10)
-    ax.set_xlabel("Principal Component 1", fontsize=9)
-    ax.set_ylabel("Principal Component 2", fontsize=9)
+    ax.set_xlabel("PC 1", fontsize=9)
+    ax.set_ylabel("PC 2", fontsize=9)
     ax.legend(fontsize=8)
+    plt.tight_layout()
     return fig
 
 def chart_lga(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(5, 3.5))
     if "lga" in d.columns:
         c = d[d["flagged"]]["lga"].value_counts()
         if not c.empty:
             ax.barh(c.index, c.values, color="#1b5e20")
-            ax.set_title("Flagged Staff per Local Government", fontweight='bold', fontsize=10)
+            ax.set_title("Flagged Staff per LGA", fontweight='bold', fontsize=10)
             ax.set_xlabel("Flagged Count", fontsize=9)
             ax.set_ylabel("LGA", fontsize=9)
         else:
             ax.text(0.5, 0.5, "No LGA Flagged Records", ha='center', va='center')
-            ax.set_title("Flagged Staff per Local Government", fontweight='bold', fontsize=10)
+            ax.set_title("Flagged Staff per LGA", fontweight='bold', fontsize=10)
     else:
         ax.text(0.5, 0.5, "LGA Column Missing", ha='center', va='center')
+    plt.tight_layout()
     return fig
 
 def chart_status_bar(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(5, 3.5))
     counts = d["anomalystatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
     bars = ax.bar(counts.index, counts.values, color=["#008751", "#d32f2f"])
     for bar in bars:
         h = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2., h, f'{int(h)}', ha='center', va='bottom', fontsize=9)
-    ax.set_title("Anomaly Status Count (Bar Chart)", fontweight='bold', fontsize=10)
-    ax.tick_params(axis='x', rotation=10)
+    ax.set_title("Anomaly Status Count", fontweight='bold', fontsize=10)
+    ax.tick_params(axis='x', rotation=10, labelsize=8)
+    plt.tight_layout()
     return fig
 
 def chart_status_pie(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(5, 3.5))
     pie_counts = d["anomalystatus"].value_counts().reindex(["No Anomaly Flag", "Flagged for Review"], fill_value=0)
     colors = ["#008751", "#d32f2f"]
     ax.pie(
@@ -121,88 +143,75 @@ def chart_status_pie(d):
         startangle=90,
         textprops={'fontsize': 8}
     )
-    ax.set_title("Anomaly Share (%) (Pie Chart)", fontweight='bold', fontsize=10)
+    ax.set_title("Anomaly Share (%)", fontweight='bold', fontsize=10)
+    plt.tight_layout()
     return fig
 
 def chart_salary_dist(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(5, 3.5))
     if "netsalary" in d.columns:
         ax.hist(d["netsalary"], bins=15, color="#008751", edgecolor="white", alpha=0.85)
-        ax.set_title("Net Salary Distribution Frequency", fontweight='bold', fontsize=10)
+        ax.set_title("Net Salary Distribution", fontweight='bold', fontsize=10)
         ax.set_xlabel("Net Salary (₦)", fontsize=9)
-        ax.set_ylabel("Employee Count", fontsize=9)
+        ax.set_ylabel("Count", fontsize=9)
     else:
         ax.text(0.5, 0.5, "NetSalary Column Missing", ha='center', va='center')
+    plt.tight_layout()
     return fig
 
 def chart_allowance_scatter(d):
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(5, 3.5))
     if "allowances" in d.columns and "netsalary" in d.columns:
         n = d[~d["flagged"]]
         f = d[d["flagged"]]
         ax.scatter(n["allowances"], n["netsalary"], color="#008751", label="Normal", alpha=0.6, s=25)
         ax.scatter(f["allowances"], f["netsalary"], color="#d32f2f", label="Flagged", marker="X", s=70)
-        ax.set_title("Allowances vs Net Salary Outlier Mapping", fontweight='bold', fontsize=10)
+        ax.set_title("Allowances vs Net Salary Outliers", fontweight='bold', fontsize=10)
         ax.set_xlabel("Allowances (₦)", fontsize=9)
         ax.set_ylabel("Net Salary (₦)", fontsize=9)
         ax.legend(fontsize=8)
     else:
         ax.text(0.5, 0.5, "Required Financial Columns Missing", ha='center', va='center')
+    plt.tight_layout()
     return fig
 
 # ============================================================
-# TOP HEADER: TINY EFCC AT EXTREME TOP RIGHT, COAT OF ARMS & IBS LOGO BALANCED LEFT/RIGHT
+# TOP HEADER SECTION (Responsive 3-Column Header)
 # ============================================================
-col_top_spacer, col_tiny_efcc = st.columns([19, 1])
-with col_tiny_efcc:
-    st.markdown("<div style='text-align: right;'>", unsafe_allow_html=True)
-    if os.path.exists("efcc_logo.jpeg"):
-        st.image("efcc_logo.jpeg", width=25)
-    elif os.path.exists("efcc_logo.jpg"):
-        st.image("efcc_logo.jpg", width=25)
-    else:
-        st.write("🦅")
-    st.markdown("</div>", unsafe_allow_html=True)
-
 st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
-col_arm, col_title, col_school = st.columns([1, 4, 1])
+col_arm, col_title, col_school = st.columns([1, 2, 1])
 
 with col_arm:
-    st.markdown("<div style='text-align: left;'>", unsafe_allow_html=True)
-    if os.path.exists("coat_of_arms.jpeg"):
-        st.image("coat_of_arms.jpeg", width=80)
-    elif os.path.exists("coat_of_arms.jpg"):
-        st.image("coat_of_arms.jpg", width=80)
+    coat_arms_file = "coat_of_arms.jpeg" if os.path.exists("coat_of_arms.jpeg") else "coat_of_arms.jpg" if os.path.exists("coat_of_arms.jpg") else None
+    if coat_arms_file:
+        st.image(coat_arms_file, use_container_width=True)
     else:
-        st.write("🇳🇬 Coat of Arms")
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center;'>🇳🇬</p>", unsafe_allow_html=True)
 
 with col_title:
     st.markdown("""
-        <div class="top-header" style="margin-top: 5px; padding: 10px;">
+        <div class="top-header">
             <p class="top-title">International Business School</p>
-            <p class="top-sub">AI Payroll Anomaly Detection System & Forensic Audit Portal</p>
+            <p class="top-sub">AI Payroll Anomaly Detection & Forensic Audit Portal</p>
         </div>
     """, unsafe_allow_html=True)
 
 with col_school:
-    st.markdown("<div style='text-align: right;'>", unsafe_allow_html=True)
-    logo_found = False
+    logo_file = None
     for filename in ["school_logo.jpeg", "school_logo.jpg", "school_logo.png", "logo.jpeg", "logo.jpg", "logo.png"]:
         if os.path.exists(filename):
-            st.image(filename, width=80)
-            logo_found = True
+            logo_file = filename
             break
-            
-    if not logo_found:
-        st.write("🏫 IBS Logo")
-    st.markdown("</div>", unsafe_allow_html=True)
+    if logo_file:
+        st.image(logo_file, use_container_width=True)
+    else:
+        st.markdown("<p style='text-align:center;'>🏫</p>", unsafe_allow_html=True)
 
-st.markdown('<div class="nigeria-banner" style="margin-top: 10px;"></div>', unsafe_allow_html=True)
+st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
 
 # ============================================================
-# INITIALIZE SESSION STATES (Starts at Step 1)
+# INITIALIZE SESSION STATES
 # ============================================================
 if "auth_verified" not in st.session_state:
     st.session_state.auth_verified = False
@@ -217,9 +226,8 @@ if "dev_index" not in st.session_state:
     st.session_state.dev_index = 0
 
 # ============================================================
-# MAIN BODY STEP NAVIGATION BAR (WITH STAGE LOCKS)
+# MOBILE-FRIENDLY NAVIGATION MENU (Dropdown + Step Buttons)
 # ============================================================
-st.markdown("### 📌 Navigation Menu")
 step_names = {
     1: "1. Authorization",
     2: "2. Data Input",
@@ -229,22 +237,26 @@ step_names = {
     6: "6. Developers"
 }
 
-nav_cols = st.columns(6)
-for s_num, s_name in step_names.items():
-    with nav_cols[s_num - 1]:
-        btn_label = f"📍 {s_num}" if st.session_state.step != s_num else f"👉 [{s_num}]"
-        if st.button(btn_label, use_container_width=True, key=f"nav_btn_{s_num}"):
-            if s_num > 1 and (not st.session_state.auth_verified or not st.session_state.full_name.strip()):
-                st.warning("⛔ ACCESS LOCKED: Please complete and confirm valid authorization on Step 1 first.")
-            elif s_num > 2 and "df" not in st.session_state:
-                st.warning("⛔ ACCESS LOCKED: Please load or generate a dataset on Step 2 first.")
-            elif s_num > 3 and "results" not in st.session_state:
-                st.warning("⛔ ACCESS LOCKED: Please run AI Model Analysis on Step 3 first.")
-            else:
-                st.session_state.step = s_num
-                st.rerun()
-                
-st.markdown(f"**Current Active Section:** `{step_names[st.session_state.step]}`")
+# Sidebar Selectbox Navigation for Quick Mobile Access
+selected_step_name = st.sidebar.selectbox(
+    "📱 Quick Navigation", 
+    options=list(step_names.values()),
+    index=st.session_state.step - 1
+)
+selected_step = int(selected_step_name.split(".")[0])
+
+if selected_step != st.session_state.step:
+    if selected_step > 1 and (not st.session_state.auth_verified or not st.session_state.full_name.strip()):
+        st.sidebar.warning("⛔ Complete Authorization on Step 1 first.")
+    elif selected_step > 2 and "df" not in st.session_state:
+        st.sidebar.warning("⛔ Load data on Step 2 first.")
+    elif selected_step > 3 and "results" not in st.session_state:
+        st.sidebar.warning("⛔ Run AI Analysis on Step 3 first.")
+    else:
+        st.session_state.step = selected_step
+        st.rerun()
+
+st.markdown(f"**Current Step:** `{step_names[st.session_state.step]}`")
 st.divider()
 
 # ============================================================
@@ -253,35 +265,31 @@ st.divider()
 if st.session_state.step == 1:
     st.header("🔑 Investigator Authorization & Registration")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("Authorization Check")
-        auth_choice = st.radio(
-            "Do you have official authorization?", 
-            ["-- Please Select --", "YES", "NO"], 
-            index=0
-        )
-        
-        if auth_choice == "-- Please Select --":
-            st.session_state.auth_verified = False
-            st.info("ℹ️ Please select your authorization status to proceed.")
-        elif auth_choice == "NO":
-            st.session_state.auth_verified = False
-            st.error("⛔ ACCESS DENIED: Proper authorization is required.")
-        else:
-            st.session_state.auth_verified = True
-            st.success("✅ Authorization Confirmed.")
+    auth_choice = st.radio(
+        "Do you have official authorization?", 
+        ["-- Please Select --", "YES", "NO"], 
+        index=0
+    )
+    
+    if auth_choice == "-- Please Select --":
+        st.session_state.auth_verified = False
+        st.info("ℹ️ Please select your authorization status to proceed.")
+    elif auth_choice == "NO":
+        st.session_state.auth_verified = False
+        st.error("⛔ ACCESS DENIED: Proper authorization is required.")
+    else:
+        st.session_state.auth_verified = True
+        st.success("✅ Authorization Confirmed.")
 
-    with col2:
-        st.subheader("Investigator Details")
-        st.session_state.full_name = st.text_input("Full Name:", value=st.session_state.full_name)
-        st.session_state.address = st.text_input("Official Address:", value=st.session_state.address)
-        st.session_state.contact = st.text_input("Contact Number:", value=st.session_state.contact)
+    st.subheader("Investigator Details")
+    st.session_state.full_name = st.text_input("Full Name:", value=st.session_state.full_name)
+    st.session_state.address = st.text_input("Official Address:", value=st.session_state.address)
+    st.session_state.contact = st.text_input("Contact Number:", value=st.session_state.contact)
 
     if st.session_state.auth_verified and st.session_state.full_name.strip() != "":
         st.markdown(
             f"""
-            <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #008751; margin-top: 15px;">
+            <div style="background-color: #e8f5e9; padding: 12px; border-radius: 8px; border-left: 5px solid #008751; margin-top: 15px;">
                 <h4 style="color: #008751; margin: 0 0 5px 0;">Official Session Active</h4>
                 <p style="margin: 0; color: #1b5e20; font-weight: 600;">
                     Welcome, <b>{st.session_state.full_name}</b>. Your credentials have been logged for this forensic session.
@@ -300,14 +308,14 @@ if st.session_state.step == 1:
         else:
             st.session_state.step = 2
             st.rerun()
-        
+
 # ============================================================
 # PAGE 2: DATA INPUT & CLEANING
 # ============================================================
 if st.session_state.step == 2:
     if not st.session_state.auth_verified or not st.session_state.full_name.strip():
-        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 to access this page.")
-        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step2_auth"):
+        st.error("⛔ ACCESS LOCKED: Complete official authorization on Step 1 first.")
+        if st.button("⬅️ Back to Step 1: Authorization"):
             st.session_state.step = 1
             st.rerun()
         st.stop()
@@ -317,7 +325,6 @@ if st.session_state.step == 2:
     data_choice = st.radio(
         "Select Dataset Source:",
         ["— Please Select —", "Generate Sample Payroll Dataset (500 Records)", "Upload External Payroll CSV File"],
-        horizontal=True,
         index=0,
         key="dataset_radio_choice"
     )
@@ -326,7 +333,7 @@ if st.session_state.step == 2:
     if data_choice == "— Please Select —":
         if "df" in st.session_state:
             del st.session_state.df
-        st.info("ℹ️ Please select a dataset source above to proceed.")
+        st.info("ℹ️ Select a dataset source above to proceed.")
         
     elif "Generate" in data_choice:
         np.random.seed(42)
@@ -346,14 +353,14 @@ if st.session_state.step == 2:
         df.loc[25, "allowances"] = 300000.00
         df.loc[25, "netsalary"] = df.loc[25, "basicsalary"] + df.loc[25, "allowances"] - df.loc[25, "deductions"]
         df.loc[50, "deductions"] = 0.00
-        st.success("Sample Nigerian payroll dataset generated with test anomalies.")
+        st.success("Sample Nigerian payroll dataset generated.")
         
     elif "Upload" in data_choice:
         uploaded_file = st.file_uploader("Upload Payroll CSV file", type=["csv"])
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
             df.columns = [c.lower().strip() for c in df.columns]
-            st.success("Successfully loaded uploaded CSV file.")
+            st.success("Loaded uploaded CSV file successfully.")
         else:
             if "df" in st.session_state:
                 del st.session_state.df
@@ -376,22 +383,20 @@ if st.session_state.step == 2:
             if can_proceed:
                 st.session_state.step = 3
                 st.rerun()
-        if not can_proceed:
-            st.caption("⚠️ Please select or generate a dataset to continue.")
-      
+
 # ============================================================
 # PAGE 3: AI MODEL ANALYSIS
 # ============================================================
 if st.session_state.step == 3:
     if not st.session_state.auth_verified:
-        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 first.")
-        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step3"):
+        st.error("⛔ ACCESS LOCKED: Complete authorization on Step 1 first.")
+        if st.button("⬅️ Go Back to Step 1"):
             st.session_state.step = 1
             st.rerun()
         st.stop()
     if "df" not in st.session_state:
-        st.error("⛔ ACCESS LOCKED: Please load or generate data on Step 2 first.")
-        if st.button("⬅️ Go Back to Step 2: Data Input", key="back_step3_data"):
+        st.error("⛔ ACCESS LOCKED: Load or generate data on Step 2 first.")
+        if st.button("⬅️ Go Back to Step 2"):
             st.session_state.step = 2
             st.rerun()
         st.stop()
@@ -433,9 +438,11 @@ if st.session_state.step == 3:
         st.session_state.results = results
         st.session_state.flagged_records = results[results["flagged"]].copy()
         
-        m1, m2, m3, m4 = st.columns(4)
+        m1, m2 = st.columns(2)
         m1.metric("Analyzed", len(results))
         m2.metric("Flagged", len(st.session_state.flagged_records))
+        
+        m3, m4 = st.columns(2)
         m3.metric("Normal", len(results) - len(st.session_state.flagged_records))
         m4.metric("Percentage", f"{round(len(st.session_state.flagged_records) / len(results) * 100, 2)}%")
         
@@ -449,7 +456,7 @@ if st.session_state.step == 3:
             st.session_state.step = 2
             st.rerun()
     with col_b2:
-        if st.button("Continue to Visualizations & Reports ➡️", use_container_width=True):
+        if st.button("Continue to Visualizations ➡️", use_container_width=True):
             st.session_state.step = 4
             st.rerun()
 
@@ -457,48 +464,29 @@ if st.session_state.step == 3:
 # PAGE 4: VISUALIZATIONS & REPORTS
 # ============================================================
 if st.session_state.step == 4:
-    if not st.session_state.auth_verified:
-        st.error("⛔ ACCESS LOCKED: You must complete official authorization on Step 1 first.")
-        if st.button("⬅️ Go Back to Step 1: Authorization", key="back_step4_auth"):
-            st.session_state.step = 1
-            st.rerun()
-        st.stop()
-    if "results" not in st.session_state:
-        st.error("⛔ ACCESS LOCKED: Please run AI Model Analysis on Step 3 first.")
-        if st.button("⬅️ Go Back to Step 3: AI Analysis", key="back_step4_ai"):
-            st.session_state.step = 3
-            st.rerun()
+    if not st.session_state.auth_verified or "results" not in st.session_state:
+        st.error("⛔ ACCESS LOCKED: Please complete earlier steps first.")
         st.stop()
 
-    st.header("📊 Advanced Payroll Analytics & Forensic Graphs")
-    
+    st.header("📊 Advanced Payroll Analytics")
     results = st.session_state.results
     flagged_records = st.session_state.flagged_records
     
-    st.subheader("1. Dimensional Reduction & Regional Risk Analysis")
-    col_v1, col_v2 = st.columns(2)
-    with col_v1:
-        st.pyplot(chart_pca(results))
-    with col_v2:
-        st.pyplot(chart_lga(results))
+    st.subheader("1. Dimensional Reduction & Regional Risk")
+    st.pyplot(chart_pca(results), use_container_width=True)
+    st.pyplot(chart_lga(results), use_container_width=True)
 
     st.divider()
 
     st.subheader("2. Anomaly Counts & Proportion Share")
-    col_v3, col_v4 = st.columns(2)
-    with col_v3:
-        st.pyplot(chart_status_bar(results))
-    with col_v4:
-        st.pyplot(chart_status_pie(results))
+    st.pyplot(chart_status_bar(results), use_container_width=True)
+    st.pyplot(chart_status_pie(results), use_container_width=True)
 
     st.divider()
 
-    st.subheader("3. Distributional Depth & Financial Correlation Analysis")
-    col_v5, col_v6 = st.columns(2)
-    with col_v5:
-        st.pyplot(chart_salary_dist(results))
-    with col_v6:
-        st.pyplot(chart_allowance_scatter(results))
+    st.subheader("3. Depth & Financial Correlation Analysis")
+    st.pyplot(chart_salary_dist(results), use_container_width=True)
+    st.pyplot(chart_allowance_scatter(results), use_container_width=True)
         
     st.divider()
     st.subheader("📦 Download Audit Package")
@@ -537,10 +525,7 @@ if st.session_state.step == 4:
 # ============================================================
 if st.session_state.step == 5:
     if not st.session_state.auth_verified or "results" not in st.session_state:
-        st.error("⛔ ACCESS LOCKED: Please complete previous mandatory steps first.")
-        if st.button("⬅️ Go Back to Step 1", key="back_step5_lock"):
-            st.session_state.step = 1
-            st.rerun()
+        st.error("⛔ ACCESS LOCKED: Complete prior steps first.")
         st.stop()
 
     st.header("❓ Project Q & A Assistant & User Kudos")
@@ -578,169 +563,63 @@ if st.session_state.step == 5:
             st.rerun()
 
 # ============================================================
-# PAGE 6: DEVELOPERS TEAM PAGE SLIDESHOW (12 MEMBERS)
+# PAGE 6: DEVELOPERS TEAM PAGE SLIDESHOW
 # ============================================================
 if st.session_state.step == 6:
     if not st.session_state.auth_verified or "results" not in st.session_state:
-        st.error("⛔ ACCESS LOCKED: Please complete previous mandatory steps first.")
-        if st.button("⬅️ Go Back to Step 1", key="back_step6_lock"):
-            st.session_state.step = 1
-            st.rerun()
+        st.error("⛔ ACCESS LOCKED: Complete prior steps first.")
         st.stop()
 
     st.header("👥 Meet the Development Team (12 Members)")
-    st.markdown("Browse through the team members who built this forensic audit platform.")
 
     developers = [
-        {
-            "name": "A. O. JUWON",
-            "address": "Ejuku, Yagba East LGA",
-            "state": "Kogi State",
-            "education": "NCE, B.Sc., M.Sc. (In View)",
-            "role": "Team Lead and Project Problem Analyzer",
-            "marital_status": "Married",
-            "image": "developer 1.jpeg"
-        },
-        {
-            "name": "ADEYEMI MARY MARVELOUS",
-            "address": "ODO-ERE, YAGBA WEST LG",
-            "state": "KOGI STATE",
-            "education": "B. Sc",
-            "role": "AI TEAM",
-            "marital_status": "MARRIED",
-            "image": "developer 2.jpeg"
-        },
-        {
-            "name": "IBITOYE MAYOMIKUN JONATHAN",
-            "address": "ISANLU, YAGBA EAST LG",
-            "state": "KOGI STATE",
-            "education": "B.Sc (ENG) ILORIN",
-            "role": "DATA COLLECTION TEAM",
-            "marital_status": "Single",
-            "image": "developer 3.jpeg"
-        },
-        {
-            "name": "OLUKAIYE OLUGBENGA TIMOTHY",
-            "address": "BOLORUNDURO KABBA, KABBA BUNU LG",
-            "state": "KOGI STATE",
-            "education": "B.Sc. (ENGINEERING), CUSTECH Osara",
-            "role": "PROBLEM SOLVING TEAM",
-            "marital_status": "Single",
-            "image": "developer 4.jpeg"
-        },
-        {
-            "name": "KOMOLAFE BABATUNDE RICHARD",
-            "address": "AYETORO GBEDE IJUMU LG",
-            "state": "KOGI STATE",
-            "education": "B. Sc.",
-            "role": "DEMONSTRATION TEAM",
-            "marital_status": "Single",
-            "image": "developer 5.jpeg"
-        },
-        {
-            "name": "ADEWUMI BISIRIYU TUNDE",
-            "address": "IFE_OLUKOTUN, YAGBA EAST LG",
-            "state": "KOGI STATE",
-            "education": "B. Sc, CNA, MBA (in view)",
-            "role": "DATA COLLECTION TEAM",
-            "marital_status": "MARRIED",
-            "image": "developer 6.jpeg"
-        },
-        {
-            "name": "BABALOLA MARVELOUS ITUNUOLUWA",
-            "address": "EGBE, YAGBA WEST",
-            "state": "KOGI STATE",
-            "education": "B. Sc (NURSING) FED.UNI LOKOJA",
-            "role": "DEMONSTRATION TEAM MEMBER",
-            "marital_status": "Single",
-            "image": "developer 7.jpeg"
-        },
-        {
-            "name": "AKANKU TAIYE OLUWAPEMISIRE",
-            "address": "ITEDO ISANLU, YAGBA EAST LG",
-            "state": "KOGI STATE",
-            "education": "B Sc. (Econs)",
-            "role": "DEMONSTRATION TEAM MEMBER",
-            "marital_status": "MARRIED",
-            "image": "developer 8.jpeg"
-        },
-        {
-            "name": "VICTOR IWALAYE",
-            "address": "IYARA, IJUMU LG",
-            "state": "KOGI STATE",
-            "education": "NATIONAL DEPLOMA",
-            "role": "AI TEAM",
-            "marital_status": "Single",
-            "image": "developer 9.jpeg"
-        },
-        {
-            "name": "RACHEAL OLORUNMAIYE (Shellie)",
-            "address": "KABBA BUNNU, LG",
-            "state": "KOGI STATE",
-            "education": "B.Sc",
-            "role": "DATA COLLECTION TEAM",
-            "marital_status": "N/A",
-            "image": "developer 10.jpeg"
-        },
-        {
-            "name": "ISREAL ADEOLA OLUMAIYEGUN",
-            "address": "ODO ERE, YAGBA WEST LG",
-            "state": "KOGI STATE",
-            "education": "B. Sc. (Econs) KSU, kabba",
-            "role": "DEMONSTRATION TEAM MEMBER",
-            "marital_status": "Single",
-            "image": "developer 11.jpeg"
-        },
-        {
-            "name": "OLUWATOSIN MOSES O",
-            "address": "ODO-ERE, YAGBA WEST",
-            "state": "KOGI STATE",
-            "education": "B.Sc., (Sociology)",
-            "role": "AI TEAM",
-            "marital_status": "MARRIED",
-            "image": "developer 12.jpeg"
-        }
+        {"name": "A. O. JUWON", "address": "Ejuku, Yagba East LGA", "state": "Kogi State", "education": "NCE, B.Sc., M.Sc. (In View)", "role": "Team Lead and Project Problem Analyzer", "marital_status": "Married", "image": "developer 1.jpeg"},
+        {"name": "ADEYEMI MARY MARVELOUS", "address": "ODO-ERE, YAGBA WEST LG", "state": "KOGI STATE", "education": "B. Sc", "role": "AI TEAM", "marital_status": "MARRIED", "image": "developer 2.jpeg"},
+        {"name": "IBITOYE MAYOMIKUN JONATHAN", "address": "ISANLU, YAGBA EAST LG", "state": "KOGI STATE", "education": "B.Sc (ENG) ILORIN", "role": "DATA COLLECTION TEAM", "marital_status": "Single", "image": "developer 3.jpeg"},
+        {"name": "OLUKAIYE OLUGBENGA TIMOTHY", "address": "BOLORUNDURO KABBA, KABBA BUNU LG", "state": "KOGI STATE", "education": "B.Sc. (ENGINEERING), CUSTECH Osara", "role": "PROBLEM SOLVING TEAM", "marital_status": "Single", "image": "developer 4.jpeg"},
+        {"name": "KOMOLAFE BABATUNDE RICHARD", "address": "AYETORO GBEDE IJUMU LG", "state": "KOGI STATE", "education": "B. Sc.", "role": "DEMONSTRATION TEAM", "marital_status": "Single", "image": "developer 5.jpeg"},
+        {"name": "ADEWUMI BISIRIYU TUNDE", "address": "IFE_OLUKOTUN, YAGBA EAST LG", "state": "KOGI STATE", "education": "B. Sc, CNA, MBA (in view)", "role": "DATA COLLECTION TEAM", "marital_status": "MARRIED", "image": "developer 6.jpeg"},
+        {"name": "BABALOLA MARVELOUS ITUNUOLUWA", "address": "EGBE, YAGBA WEST", "state": "KOGI STATE", "education": "B. Sc (NURSING) FED.UNI LOKOJA", "role": "DEMONSTRATION TEAM MEMBER", "marital_status": "Single", "image": "developer 7.jpeg"},
+        {"name": "AKANKU TAIYE OLUWAPEMISIRE", "address": "ITEDO ISANLU, YAGBA EAST LG", "state": "KOGI STATE", "education": "B Sc. (Econs)", "role": "DEMONSTRATION TEAM MEMBER", "marital_status": "MARRIED", "image": "developer 8.jpeg"},
+        {"name": "VICTOR IWALAYE", "address": "IYARA, IJUMU LG", "state": "KOGI STATE", "education": "NATIONAL DEPLOMA", "role": "AI TEAM", "marital_status": "Single", "image": "developer 9.jpeg"},
+        {"name": "RACHEAL OLORUNMAIYE (Shellie)", "address": "KABBA BUNNU, LG", "state": "KOGI STATE", "education": "B.Sc", "role": "DATA COLLECTION TEAM", "marital_status": "N/A", "image": "developer 10.jpeg"},
+        {"name": "ISREAL ADEOLA OLUMAIYEGUN", "address": "ODO ERE, YAGBA WEST LG", "state": "KOGI STATE", "education": "B. Sc. (Econs) KSU, kabba", "role": "DEMONSTRATION TEAM MEMBER", "marital_status": "Single", "image": "developer 11.jpeg"},
+        {"name": "OLUWATOSIN MOSES O", "address": "ODO-ERE, YAGBA WEST", "state": "KOGI STATE", "education": "B.Sc., (Sociology)", "role": "AI TEAM", "marital_status": "MARRIED", "image": "developer 12.jpeg"}
     ]
 
-    col_prev, col_mid, col_next = st.columns([1, 2, 1])
-
+    col_prev, col_next = st.columns(2)
     with col_prev:
-        if st.button("⬅️ Previous Developer", use_container_width=True):
+        if st.button("⬅️ Previous", use_container_width=True):
             st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
             st.rerun()
-
     with col_next:
-        if st.button("Next Developer ➡️", use_container_width=True):
+        if st.button("Next ➡️", use_container_width=True):
             st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
             st.rerun()
 
     current_dev = developers[st.session_state.dev_index]
-
     st.markdown("---")
-    c1, c2 = st.columns([1, 2])
+    
+    img_file = current_dev["image"]
+    img_alt = img_file.replace(".jpeg", ".jpg") if ".jpeg" in img_file else img_file.replace(".jpg", ".jpeg")
+    
+    if os.path.exists(img_file):
+        st.image(img_file, use_container_width=True)
+    elif os.path.exists(img_alt):
+        st.image(img_alt, use_container_width=True)
+    else:
+        st.info(f"🖼️ Photo: {current_dev['image']}")
 
-    with c1:
-        img_file = current_dev["image"]
-        img_alt = img_file.replace(".jpeg", ".jpg") if ".jpeg" in img_file else img_file.replace(".jpg", ".jpeg")
-        
-        if os.path.exists(img_file):
-            st.image(img_file, use_column_width=True)
-        elif os.path.exists(img_alt):
-            st.image(img_alt, use_column_width=True)
-        else:
-            st.info(f"🖼️ [Image file '{current_dev['image']}' not found in folder. Please add your JPEG picture.]")
-
-    with c2:
-        st.subheader(current_dev["name"])
-        st.markdown(f"📍 **Address:** {current_dev['address']}")
-        st.markdown(f"🏛️ **State:** {current_dev['state']}")
-        st.markdown(f"🎓 **Education:** {current_dev['education']}")
-        st.markdown(f"💼 **Role:** {current_dev['role']}")
-        st.markdown(f"💍 **Marital Status:** {current_dev['marital_status']}")
-        st.caption(f"Developer {st.session_state.dev_index + 1} of {len(developers)}")
+    st.subheader(current_dev["name"])
+    st.markdown(f"📍 **Address:** {current_dev['address']}")
+    st.markdown(f"🏛️ **State:** {current_dev['state']}")
+    st.markdown(f"🎓 **Education:** {current_dev['education']}")
+    st.markdown(f"💼 **Role:** {current_dev['role']}")
+    st.markdown(f"💍 **Marital Status:** {current_dev['marital_status']}")
+    st.caption(f"Developer {st.session_state.dev_index + 1} of {len(developers)}")
 
     st.markdown("")
-    if st.button("⬅️ Back to Q&A Assistant & Kudos", use_container_width=True):
+    if st.button("⬅️ Back to Q&A Assistant", use_container_width=True):
         st.session_state.step = 5
         st.rerun()
 
