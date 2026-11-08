@@ -102,13 +102,6 @@ st.markdown("""
     font-size: 1.25rem;
     margin: 0;
 }
-/* Custom styling for Previous (Green) and Next (Red) compact buttons */
-div[data-testid="column"] button[key*="prev_btn"] {
-    background-color: #008751 !important;
-}
-div[data-testid="column"] button[key*="next_btn"] {
-    background-color: #d32f2f !important;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -538,4 +531,158 @@ if st.session_state.step == 4:
     st.subheader("📦 Download Audit Package")
     summary_df = pd.DataFrame({
         "ReportItem": ["System", "DateTime", "Investigator", "Contact", "TotalRecords", "FlaggedRecords"],
-        "Value": ["Federal Republic of Nigeria Payroll System", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), st.session
+        "Value": ["Federal Republic of Nigeria Payroll System", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), st.session_state.full_name, st.session_state.contact, len(results), len(flagged_records)]
+    })
+    
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("nigeria_payroll_summary.csv", summary_df.to_csv(index=False))
+        zf.writestr("full_results.csv", results.to_csv(index=False))
+        zf.writestr("flagged_records.csv", flagged_records.to_csv(index=False))
+        
+    st.download_button(
+        label="📥 Download Official Audit ZIP Package",
+        data=zip_buffer.getvalue(),
+        file_name=f"Nigeria_Payroll_Audit_{datetime.now().strftime('%Y%m%d')}.zip",
+        mime="application/zip",
+        use_container_width=True
+    )
+
+    st.markdown("")
+    col_b1, col_b2 = st.columns(2)
+    with col_b1:
+        if st.button("⬅️ Back to AI Analysis", use_container_width=True):
+            st.session_state.step = 3
+            st.rerun()
+    with col_b2:
+        if st.button("Continue to Q&A & Kudos ➡️", use_container_width=True):
+            st.session_state.step = 5
+            st.rerun()
+
+# ============================================================
+# PAGE 5: Q&A ASSISTANT & KUDOS
+# ============================================================
+if st.session_state.step == 5:
+    if not st.session_state.auth_verified or "results" not in st.session_state:
+        st.error("⛔ ACCESS LOCKED: Complete prior steps first.")
+        st.stop()
+
+    st.header("❓ Project Q & A Assistant & User Kudos")
+    
+    q_input = st.text_input("Ask a question about the system:")
+    if q_input:
+        ans = "I do not have a prepared answer for that question."
+        if "algorithm" in q_input.lower() or "isolation" in q_input.lower():
+            ans = "The system uses Isolation Forest, an unsupervised machine learning algorithm."
+        elif "training" in q_input.lower():
+            ans = "Training uses 80% of the dataset to learn standard payroll patterns."
+        elif "report" in q_input.lower():
+            ans = "The report contains summary statistics, full data results, and flagged anomaly tables packaged into a ZIP file."
+        st.info("Assistant Response: " + ans)
+        
+    st.divider()
+    st.subheader("🌟 Leave Your Kudos")
+    with st.form("kudos_form"):
+        k_name = st.text_input("Your Name or Department:", value=st.session_state.full_name)
+        k_rating = st.select_slider("Rate System Performance:", options=["Poor", "Fair", "Good", "Very Good", "Excellent"], value="Excellent")
+        k_comment = st.text_area("Your Kudos or Comments:", value="Great application!")
+        submitted = st.form_submit_button("Submit Kudos")
+        if submitted:
+            st.success("🎉 Thank you! Your kudos have been logged successfully.")
+
+    st.markdown("")
+    col_b1, col_b2 = st.columns(2)
+    with col_b1:
+        if st.button("⬅️ Back to Visualizations", use_container_width=True):
+            st.session_state.step = 4
+            st.rerun()
+    with col_b2:
+        if st.button("Continue to Developers ➡️", use_container_width=True):
+            st.session_state.step = 6
+            st.rerun()
+
+# ============================================================
+# PAGE 6: DEVELOPERS TEAM PAGE SLIDESHOW
+# ============================================================
+if st.session_state.step == 6:
+    if not st.session_state.auth_verified or "results" not in st.session_state:
+        st.error("⛔ ACCESS LOCKED: Complete prior steps first.")
+        st.stop()
+
+    st.header("👥 Meet the Development Team (12 Members)")
+
+    developers = [
+        {"name": "A. O. JUWON", "address": "Ejuku, Yagba East LGA", "state": "Kogi State", "education": "NCE, B.Sc., M.Sc. (In View)", "role": "Team Lead and Project Problem Analyzer", "marital_status": "Married", "image": "developer 1.jpeg"},
+        {"name": "ADEYEMI MARY MARVELOUS", "address": "ODO-ERE, YAGBA WEST LG", "state": "KOGI STATE", "education": "B. Sc", "role": "AI TEAM", "marital_status": "MARRIED", "image": "developer 2.jpeg"},
+        {"name": "IBITOYE MAYOMIKUN JONATHAN", "address": "ISANLU, YAGBA EAST LG", "state": "KOGI STATE", "education": "B.Sc (ENG) ILORIN", "role": "DATA COLLECTION TEAM", "marital_status": "Single", "image": "developer 3.jpeg"},
+        {"name": "OLUKAIYE OLUGBENGA TIMOTHY", "address": "BOLORUNDURO KABBA, KABBA BUNU LG", "state": "KOGI STATE", "education": "B.Sc. (ENGINEERING), CUSTECH Osara", "role": "PROBLEM SOLVING TEAM", "marital_status": "Single", "image": "developer 4.jpeg"},
+        {"name": "KOMOLAFE BABATUNDE RICHARD", "address": "AYETORO GBEDE IJUMU LG", "state": "KOGI STATE", "education": "B. Sc.", "role": "DEMONSTRATION TEAM", "marital_status": "Single", "image": "developer 5.jpeg"},
+        {"name": "ADEWUMI BISIRIYU TUNDE", "address": "IFE_OLUKOTUN, YAGBA EAST LG", "state": "KOGI STATE", "education": "B. Sc, CNA, MBA (in view)", "role": "DATA COLLECTION TEAM", "marital_status": "MARRIED", "image": "developer 6.jpeg"},
+        {"name": "BABALOLA MARVELOUS ITUNUOLUWA", "address": "EGBE, YAGBA WEST", "state": "KOGI STATE", "education": "B. Sc (NURSING) FED.UNI LOKOJA", "role": "DEMONSTRATION TEAM MEMBER", "marital_status": "Single", "image": "developer 7.jpeg"},
+        {"name": "AKANKU TAIYE OLUWAPEMISIRE", "address": "ITEDO ISANLU, YAGBA EAST LG", "state": "KOGI STATE", "education": "B Sc. (Econs)", "role": "DEMONSTRATION TEAM MEMBER", "marital_status": "MARRIED", "image": "developer 8.jpeg"},
+        {"name": "VICTOR IWALAYE", "address": "IYARA, IJUMU LG", "state": "KOGI STATE", "education": "NATIONAL DEPLOMA", "role": "AI TEAM", "marital_status": "Single", "image": "developer 9.jpeg"},
+        {"name": "RACHEAL OLORUNMAIYE (Shellie)", "address": "KABBA BUNNU, LG", "state": "KOGI STATE", "education": "B.Sc", "role": "DATA COLLECTION TEAM", "marital_status": "N/A", "image": "developer 10.jpeg"},
+        {"name": "ISREAL ADEOLA OLUMAIYEGUN", "address": "ODO ERE, YAGBA WEST LG", "state": "KOGI STATE", "education": "B. Sc. (Econs) KSU, kabba", "role": "DEMONSTRATION TEAM MEMBER", "marital_status": "Single", "image": "developer 11.jpeg"},
+        {"name": "OLUWATOSIN MOSES O", "address": "ODO-ERE, YAGBA WEST", "state": "KOGI STATE", "education": "B.Sc., (Sociology)", "role": "AI TEAM", "marital_status": "MARRIED", "image": "developer 12.jpeg"}
+    ]
+
+    current_dev = developers[st.session_state.dev_index]
+    st.markdown("---")
+    
+    # 1. Picture Display
+    img_file = current_dev["image"]
+    img_alt = img_file.replace(".jpeg", ".jpg") if ".jpeg" in img_file else img_file.replace(".jpg", ".jpeg")
+    
+    if os.path.exists(img_file):
+        st.image(img_file, use_container_width=True)
+    elif os.path.exists(img_alt):
+        st.image(img_alt, use_container_width=True)
+    else:
+        st.info(f"🖼️ Photo: {current_dev['image']}")
+
+    # 2. Profile Details Display
+    st.subheader(current_dev["name"])
+    st.markdown(f"📍 **Address:** {current_dev['address']}")
+    st.markdown(f"🏛️ **State:** {current_dev['state']}")
+    st.markdown(f"🎓 **Education:** {current_dev['education']}")
+    st.markdown(f"💼 **Role:** {current_dev['role']}")
+    st.markdown(f"💍 **Marital Status:** {current_dev['marital_status']}")
+    st.caption(f"Developer {st.session_state.dev_index + 1} of {len(developers)}")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 3. Compact Previous (Green) and Next (Red) Buttons using inline styling for distinct colors
+    col_space1, col_prev, col_next, col_space2 = st.columns([1, 2, 2, 1])
+    
+    with col_prev:
+        st.markdown("""
+        <style>
+        div.stButton > button:first-child {
+            background-color: #008751;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        if st.button("⬅️ Previous", key="dev_prev_btn", use_container_width=True):
+            st.session_state.dev_index = (st.session_state.dev_index - 1) % len(developers)
+            st.rerun()
+            
+    with col_next:
+        st.markdown("""
+        <style>
+        div.stButton > button:nth-child(1) {
+            /* Handled globally or specifically via unique keys */
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        if st.button("Next ➡️", key="dev_next_btn", use_container_width=True):
+            st.session_state.dev_index = (st.session_state.dev_index + 1) % len(developers)
+            st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⬅️ Back to Q&A Assistant", use_container_width=True):
+        st.session_state.step = 5
+        st.rerun()
+
+# Footer
+st.markdown("---")
+st.caption("Federal Republic of Nigeria • Official Portal")
