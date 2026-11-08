@@ -79,10 +79,14 @@ div.element-container:has(.mk) {
 .header-img { width: 42px; height: 42px; object-fit: contain; }
 .header-emoji { font-size: 30px; line-height: 1; }
 .header-title-box { text-align: center; flex-grow: 1; }
+
+/* School name: UPPERCASE, RED, BOLD */
 .top-title {
-    color: var(--green-dark);
-    font-weight: 800;
+    color: #c62828 !important;
+    font-weight: 900 !important;
     font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     margin: 0;
     line-height: 1.25;
 }
@@ -94,19 +98,19 @@ div.element-container:has(.mk) {
     line-height: 1.3;
 }
 
-/* ---------- Page title bar ---------- */
+/* ---------- Page title bar: solid deep green, white UPPERCASE text ---------- */
 .page-title {
-    border-left: 4px solid var(--green);
-    background-color: #ffffff;
-    border-top: 1px solid var(--line);
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 9px 12px;
+    background-color: var(--green-dark);
+    color: #ffffff;
+    padding: 11px 14px;
     border-radius: 6px;
+    border-left: 5px solid var(--red);
     margin: 4px 0 6px 0;
-    color: var(--green-dark);
-    font-weight: 700;
-    font-size: 1.05rem;
+    font-weight: 800;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
 }
 
 /* ---------- Default buttons (green) ---------- */
