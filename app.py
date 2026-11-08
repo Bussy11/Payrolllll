@@ -73,6 +73,35 @@ st.markdown("""
     font-weight: bold !important;
     border-radius: 8px !important;
 }
+/* Red News Button Styling */
+.news-btn-container a {
+    background-color: #d32f2f !important;
+    color: white !important;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 12px;
+    display: inline-block;
+    box-shadow: 0px 2px 6px rgba(211, 47, 47, 0.3);
+}
+.news-btn-container a:hover {
+    background-color: #b71c1c !important;
+}
+/* Bordered & Bold Green Authorization Header */
+.auth-header-box {
+    border: 2px solid #008751;
+    background-color: #e8f5e9;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.auth-header-text {
+    color: #008751;
+    font-weight: 900;
+    font-size: 1.25rem;
+    margin: 0;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -222,7 +251,7 @@ if "dev_index" not in st.session_state:
     st.session_state.dev_index = 0
 
 # ============================================================
-# NAVIGATION MENU (Sidebar Selectbox for clean mobile UI)
+# NAVIGATION MENU + RED NEWS BUTTON
 # ============================================================
 step_names = {
     1: "1. Authorization",
@@ -233,23 +262,34 @@ step_names = {
     6: "6. Developers"
 }
 
-selected_step_name = st.sidebar.selectbox(
-    "📱 Quick Navigation", 
-    options=list(step_names.values()),
-    index=st.session_state.step - 1
-)
-selected_step = int(selected_step_name.split(".")[0])
+col_nav, col_news = st.columns([5, 1])
 
-if selected_step != st.session_state.step:
-    if selected_step > 1 and (not st.session_state.auth_verified or not st.session_state.full_name.strip()):
-        st.sidebar.warning("⛔ Complete Authorization on Step 1 first.")
-    elif selected_step > 2 and "df" not in st.session_state:
-        st.sidebar.warning("⛔ Load data on Step 2 first.")
-    elif selected_step > 3 and "results" not in st.session_state:
-        st.sidebar.warning("⛔ Run AI Analysis on Step 3 first.")
-    else:
-        st.session_state.step = selected_step
-        st.rerun()
+with col_nav:
+    selected_step_name = st.selectbox(
+        "📱 Quick Navigation", 
+        options=list(step_names.values()),
+        index=st.session_state.step - 1,
+        label_visibility="collapsed"
+    )
+    selected_step = int(selected_step_name.split(".")[0])
+
+    if selected_step != st.session_state.step:
+        if selected_step > 1 and (not st.session_state.auth_verified or not st.session_state.full_name.strip()):
+            st.warning("⛔ Complete Authorization on Step 1 first.")
+        elif selected_step > 2 and "df" not in st.session_state:
+            st.warning("⛔ Load data on Step 2 first.")
+        elif selected_step > 3 and "results" not in st.session_state:
+            st.warning("⛔ Run AI Analysis on Step 3 first.")
+        else:
+            st.session_state.step = selected_step
+            st.rerun()
+
+with col_news:
+    st.markdown("""
+        <div class="news-btn-container" style="text-align: right; padding-top: 5px;">
+            <a href="https://www.nairaland.com/news" target="_blank">📰 NEWS</a>
+        </div>
+    """, unsafe_allow_html=True)
 
 st.markdown(f"**Current Step:** `{step_names[st.session_state.step]}`")
 st.divider()
@@ -258,7 +298,11 @@ st.divider()
 # PAGE 1: AUTHORIZATION & REGISTRATION
 # ============================================================
 if st.session_state.step == 1:
-    st.header("🔑 Investigator Authorization & Registration")
+    st.markdown("""
+        <div class="auth-header-box">
+            <h2 class="auth-header-text">🔑 Investigator Authorization & Registration</h2>
+        </div>
+    """, unsafe_allow_html=True)
     
     auth_choice = st.radio(
         "Do you have official authorization?", 
