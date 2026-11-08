@@ -10,6 +10,7 @@ from datetime import datetime
 import zipfile
 import io
 import os
+import base64
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -24,38 +25,45 @@ st.set_page_config(
 )
 
 # ============================================================
-# CUSTOM STYLING
+# CUSTOM STYLING & MOBILE FLEX HEADER
 # ============================================================
 st.markdown("""
 <style>
 .stApp {
     background-color: #f7f9f8;
 }
-.nigeria-banner {
-    background-color: #008751;
-    height: 8px;
-    border-radius: 4px;
-    margin-bottom: 10px;
-}
-.top-header {
+.custom-header-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
     background-color: #ffffff;
     padding: 10px;
     border-radius: 12px;
     border: 2px solid #008751;
     box-shadow: 0px 4px 15px rgba(0, 135, 81, 0.15);
+}
+.header-img {
+    width: 50px;
+    height: auto;
+    object-fit: contain;
+}
+.header-title-box {
     text-align: center;
-    margin: 0;
+    flex-grow: 1;
 }
 .top-title {
     color: #008751;
     font-weight: 900;
-    font-size: 15px;
+    font-size: 13px;
     text-transform: uppercase;
     margin: 2px 0;
 }
 .top-sub {
     color: #1b5e20;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
     margin: 0;
 }
@@ -67,6 +75,17 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+
+# Helper function to convert local images to base64 for mobile flex layout
+def get_image_base64(filepath):
+    if os.path.exists(filepath):
+        with open(filepath, "rb") as f:
+            data = f.read()
+        encoded = base64.b64encode(data).decode()
+        ext = filepath.split(".")[-1].lower()
+        mime = "image/jpeg" if ext in ["jpg", "jpeg"] else "image/png"
+        return f"data:{mime};base64,{encoded}"
+    return ""
 
 # ============================================================
 # CHART FUNCTIONS DEFINITION (Responsive Matplotlib Figures)
@@ -158,43 +177,34 @@ def chart_allowance_scatter(d):
     return fig
 
 # ============================================================
-# TOP HEADER SECTION (Fixed Small Logo Sizes, Side-by-Side)
+# TOP HEADER SECTION (Forced Side-by-Side on Mobile via Flexbox)
 # ============================================================
-st.markdown('<div class="nigeria-banner"></div>', unsafe_allow_html=True)
+coat_arm_path = "coat_of_arms.jpeg" if os.path.exists("coat_of_arms.jpeg") else ("coat_of_arms.jpg" if os.path.exists("coat_of_arms.jpg") else "")
+coat_arm_base64 = get_image_base64(coat_arm_path)
 
-col_arm, col_title, col_school = st.columns([1, 3, 1])
+school_logo_path = ""
+for filename in ["school_logo.jpeg", "school_logo.jpg", "school_logo.png", "logo.jpeg", "logo.jpg", "logo.png"]:
+    if os.path.exists(filename):
+        school_logo_path = filename
+        break
+school_logo_base64 = get_image_base64(school_logo_path)
 
-with col_arm:
-    st.markdown("<div style='text-align: left;'>", unsafe_allow_html=True)
-    coat_arms_file = "coat_of_arms.jpeg" if os.path.exists("coat_of_arms.jpeg") else "coat_of_arms.jpg" if os.path.exists("coat_of_arms.jpg") else None
-    if coat_arms_file:
-        st.image(coat_arms_file, width=65)
-    else:
-        st.write("🇳🇬")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with col_title:
-    st.markdown("""
-        <div class="top-header">
-            <p class="top-title">International Business School</p>
-            <p class="top-sub">AI Payroll Anomaly Detection & Forensic Audit Portal</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-with col_school:
-    st.markdown("<div style='text-align: right;'>", unsafe_allow_html=True)
-    logo_file = None
-    for filename in ["school_logo.jpeg", "school_logo.jpg", "school_logo.png", "logo.jpeg", "logo.jpg", "logo.png"]:
-        if os.path.exists(filename):
-            logo_file = filename
-            break
-    if logo_file:
-        st.image(logo_file, width=65)
-    else:
-        st.write("🏫")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-st.markdown('<div class="nigeria-banner" style="margin-top: 10px;"></div>', unsafe_allow_html=True)
+st.markdown(f"""
+<div style="background-color: #008751; height: 8px; border-radius: 4px; margin-bottom: 8px;"></div>
+<div class="custom-header-container">
+    <div>
+        {"<img src='" + coat_arm_base64 + "' class='header-img'>" if coat_arm_base64 else "🇳🇬"}
+    </div>
+    <div class="header-title-box">
+        <p class="top-title">International Business School</p>
+        <p class="top-sub">AI Payroll Anomaly Detection & Forensic Audit Portal</p>
+    </div>
+    <div>
+        {"<img src='" + school_logo_base64 + "' class='header-img'>" if school_logo_base64 else "🏫"}
+    </div>
+</div>
+<div style="background-color: #008751; height: 8px; border-radius: 4px; margin-top: 8px; margin-bottom: 15px;"></div>
+""", unsafe_allow_html=True)
 
 # ============================================================
 # INITIALIZE SESSION STATES
